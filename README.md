@@ -1,10 +1,22 @@
 # scolorpicker
 scolorpicker is a color picker application written in C using nothing but Xlib.
 
-This is why scolorpicker can be installed anywhere an X.Org server is installed, is very lightweight with the executable clocking in at just 18k and has very little
-dependencies (which you probably don't have to install if you use X11).
+This is why scolorpicker can be installed anywhere an X.Org server is installed, is very lightweight with the executable clocking in at just 22k and has very little
+dependencies.
 
 ## Installation
+
+### Dependencies
+If you want to manually build scolorpicker or download it from [Releases](https://www.github.com/reallySmooll/scolorpicker/releases), you need to install some dependencies:
+
+**NOTE: These package names are for Arch Linux. You will need to get the names of these packages for other distros yourself.**
+
+- glibc (C standard library, you almost certainly don't need to install it if you've installed development packages for your distro, e.g. base-devel for Arch Linux)
+- libx11 (scolorpicker needs this library to work)
+- xclip (scolorpicker needs this to make clipboard saving, there are plans to remove this dependency and save to clipboard without any external libraries)
+
+---
+
 There are three ways of installing scolorpicker:
 
 - Using an AUR wrapper (e.g. `yay` or `paru`) **RECOMMENDED**
@@ -64,14 +76,27 @@ There are three ways of installing scolorpicker:
 ## Usage
 Usage is pretty straight-forward, you start the application and click on the pixel you want to get the color of and it will be copied to your clipboard.
 
-Which means that if everything works out, there should scolorpicker should output nothing to the terminal.
+Which means that if everything works out, scolorpicker should output nothing to the terminal.
+
+But if you'd like more from the program, in the terminal type:
+```bash
+$ scolorpicker --help # or -h
+```
+
+A help menu will pop up with all options explained.
 
 ## Features
 Here's a list of features already implemented and ones I would like to implement in the (near?) future:
 
 - [X] Small window displaying the color of the current pixel (v1.0.0)
 - [X] Color code in hexadecimal (v1.0.0)
-- [X] Color output to clipboard (v1.0.0)
-- [ ] Color code output in different modes (RGB, HSV, etc.)
-- [ ] Ability to choose to output the color code to the terminal instead of the clipboard
+- [X] Color output to clipboard using `xclip` (v1.0.0)
+- [X] Color code output in different modes (RGB, HSV, HSL, etc.) (v1.1.0)
+
+    Available modes:
+    - `hex` - Hexadecimal
+    - `rgb` - Red, Green, Blue
+
+- [X] Ability to choose to output the color code to the terminal instead of the clipboard (v1.1.0)
+- [ ] Saving to clipboard without the use of `xclip`
 - [ ] System tray so you don't have to enter a command in the terminal to get the color of a pixel (which, I'll admit is pretty dumb)
