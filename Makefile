@@ -1,4 +1,4 @@
-CFLAGS := -Wall -Wextra $(shell pkg-config --cflags --libs x11)
+CFLAGS := -Wall -Wextra $(shell pkg-config --cflags --libs x11) -I./src
 INSTALLDIR := /usr/bin
 
 all: build

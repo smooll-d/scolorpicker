@@ -22,21 +22,18 @@
  * SOFTWARE.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
 #include <X11/Xatom.h>
+
+#include "SCP_CLI.c"
 
 Display *dpy;
 
 int screen;
 int x;
 int y;
-int outputToTerminal = False;
 
 Window root;
 Window pixelWindow;
@@ -50,8 +47,6 @@ Cursor cursor;
 GC gc;
 
 char *hex;
-char *version = "v1.1.0";
-char *format = "hex";
 
 void
 SCPInit()
@@ -105,7 +100,6 @@ SCPCreatePixelWindow(Display *display, XColor *color)
     SCPGetPixelColor(dpy, rootXReturn, rootYReturn, color);
 
     pixelWindow = XCreateSimpleWindow(display, root, rootXReturn + 10, rootYReturn + 10, width, height, 0, color->pixel, color->pixel);
-    gc = XCreateGC(dpy, pixelWindow, 0, 0);
 
     Atom bypassCompositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
     if (bypassCompositor == None)
@@ -128,14 +122,14 @@ SCPCreatePixelWindow(Display *display, XColor *color)
 void
 SCPChooseFormat(const char *format)
 {
-    if (outputToTerminal == True)
+    if (outputToTerminal == true)
     {
         if (strcmp(format, "hex") == 0)
         { printf("#%06lX\n", color.pixel); }
         if (strcmp(format, "rgb") == 0)
         { printf("rgb(%d, %d, %d)\n", color.red >> 8, color.green >> 8, color.blue >> 8); }
     }
-    if (outputToTerminal == False)
+    if (outputToTerminal == false)
     {
         if (strcmp(format, "hex") == 0)
         { sprintf(hex, "#%06lX\n", color.pixel); }
@@ -177,69 +171,6 @@ SCPCopyPixelColorToClipboard(Display *display, int x, int y, XColor *color)
 }
 
 void
-SCPCLIHelp()
-{
-    printf("Usage: scolorpicker [-h, -v, -t, -c, -f (hex, rgb, etc.)]\n\n");
-    printf("Legend:\n");
-    printf("    [] - Optional\n");
-    printf("    () - Required\n\n");
-    printf("Available options:\n");
-    printf("    -h, --help                Displays this message and exits\n");
-    printf("    -v, --version             Displays version of scolorpicker and exits\n");
-    printf("    -t, --output-to-terminal  Outputs color code to terminal instead of clipboard\n");
-    printf("    -c, --output-to-clipboard Outputs color code to clipboard instead of terminal, [DEFAULT]\n");
-    printf("    -f, --format              Color code format\n\n");
-    printf("Available color code formats:\n");
-    printf("    hex Hexadecimal (e.g. #FFFFFF),                                                [DEFAULT]\n");
-    printf("    rgb Red, Green, Blue (e.g. rgb(255, 255, 255))\n");
-
-    exit(0);
-}
-
-void
-SCPCLIVersion()
-{
-    printf("scolorpicker %s - Jakub Skowron (@reallySmooll) <jakubskowron676@gmail.com>\n", version);
-
-    exit(0);
-}
-
-void
-SCPCLIHandleArguments(const char *option, const char *value)
-{
-    if (strcmp(option, "--help") == 0 || strcmp(option, "-h") == 0)
-    { SCPCLIHelp(); }
-    else if (strcmp(option, "--version") == 0 || strcmp(option, "-v") == 0)
-    { SCPCLIVersion(); }
-    else if (strcmp(option, "--output-to-terminal") == 0 || strcmp(option, "-t") == 0)
-    { outputToTerminal = True; }
-    else if (strcmp(option, "--output-to-clipboard") == 0 || strcmp(option, "-c") == 0)
-    { outputToTerminal = False; }
-    else if (strcmp(option, "--format") == 0 || strcmp(option, "-f") == 0)
-    {
-        if (value == NULL)
-        {
-            fprintf(stderr, "Missing value for option: %s\n", option);
-            exit(1);
-        }
-        else if (strcmp(value, "hex") == 0)
-        { format = "hex"; }
-        else if (strcmp(value, "rgb") == 0)
-        { format = "rgb"; }
-        else
-        {
-            fprintf(stderr, "Invalid value for option %s: %s\n", option, value);
-            exit(1);
-        }
-    }
-    else
-    {
-        fprintf(stderr, "Unknown option: %s\n", option);
-        exit(1);
-    }
-}
-
-void
 SCPClose()
 {
     XUngrabPointer(dpy, CurrentTime);
@@ -271,7 +202,7 @@ SCPMain(int argc, char *argv[])
                 i++;
             }
 
-            SCPCLIHandleArguments(option, value);
+            SCP_CLI_HandleArguments(option, value);
         }
     }
 
@@ -289,7 +220,7 @@ SCPMain(int argc, char *argv[])
                 {
                     case Button1:
                     {
-                        if (outputToTerminal == False)
+                        if (outputToTerminal == false)
                         { SCPCopyPixelColorToClipboard(dpy, event.xbutton.x, event.xbutton.y, &color); }
                         else
                         { SCPPrintPixelColor(dpy, event.xbutton.x, event.xbutton.y, &color); }
@@ -312,7 +243,7 @@ SCPMain(int argc, char *argv[])
                 y = event.xmotion.y;
 
                 SCPGetPixelColor(dpy, x, y, &color);
-                XSetForeground(dpy, gc, color.pixel);
+                XSetForeground(dpy, XDefaultGC(dpy, screen), color.pixel);
                 XFillRectangle(dpy, pixelWindow, gc, 0, 0, 100, 100);
                 XMoveWindow(dpy, pixelWindow, x + 10, y + 10);
 
