@@ -22,12 +22,21 @@
  * SOFTWARE.
  */
 
-#include "SCP/SCP.h"
+#ifndef SCP_CLI_H
+#define SCP_CLI_H
 
-int
-main(int argc, char *argv[])
-{
-    SCP_Main(argc, argv);
+#include <stdbool.h>
 
-    return 0;
-}
+// CLI Global Variables
+extern bool outputToTerminal;
+
+extern char scpversion[];
+
+extern char *format;
+
+// CLI Global Functions
+void SCP_CLI_Help();
+void SCP_CLI_Version();
+void SCP_CLI_HandleArguments(const char *option, const char *value);
+
+#endif // SCP_CLI_H

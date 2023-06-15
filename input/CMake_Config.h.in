@@ -22,12 +22,14 @@
  * SOFTWARE.
  */
 
-#include "SCP/SCP.h"
+#define SCOLORPICKER_VERSION_MAJOR "@scolorpicker_VERSION_MAJOR@"
+#define SCOLORPICKER_VERSION_MINOR "@scolorpicker_VERSION_MINOR@"
+#define SCOLORPICKER_VERSION_PATCH "@scolorpicker_VERSION_PATCH@"
 
-int
-main(int argc, char *argv[])
-{
-    SCP_Main(argc, argv);
+extern char *scpvmajor;
+extern char *scpvminor;
+extern char *scpvpatch;
 
-    return 0;
-}
+char *scpvmajor = SCOLORPICKER_VERSION_MAJOR;
+char *scpvminor = SCOLORPICKER_VERSION_MINOR;
+char *scpvpatch = SCOLORPICKER_VERSION_PATCH;

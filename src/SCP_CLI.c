@@ -22,10 +22,9 @@
  * SOFTWARE.
  */
 
-#ifndef SCP_CLI_C
-#define SCP_CLI_C
+#include "SCP/SCP_CLI.h"
+#include "CMake/CMake_Config.h"
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +32,8 @@
 // CLI Global Variables
 bool outputToTerminal = false;
 
-char *version = "v1.1.0";
+char scpversion[] = "";
+
 char *format = "hex";
 
 // CLI Global Functions
@@ -42,17 +42,17 @@ SCP_CLI_Help()
 {
     printf("Usage: scolorpicker [-h, -v, -t, -c, -f (hex, rgb, etc.)]\n\n");
     printf("Legend:\n");
-    printf("    [] - Optional\n");
-    printf("    () - Required\n\n");
+    printf("    []                        Optional\n");
+    printf("    ()                        Required\n\n");
     printf("Available options:\n");
     printf("    -h, --help                Displays this message and exits\n");
     printf("    -v, --version             Displays version of scolorpicker and exits\n");
     printf("    -t, --output-to-terminal  Outputs color code to terminal instead of clipboard\n");
-    printf("    -c, --output-to-clipboard Outputs color code to clipboard instead of terminal, [DEFAULT]\n");
+    printf("    -c, --output-to-clipboard Outputs color code to clipboard instead of terminal  [DEFAULT]\n");
     printf("    -f, --format              Color code format\n\n");
     printf("Available color code formats:\n");
-    printf("    hex Hexadecimal (e.g. #FFFFFF),                                                [DEFAULT]\n");
-    printf("    rgb Red, Green, Blue (e.g. rgb(255, 255, 255))\n");
+    printf("    hex                       Hexadecimal (e.g. #FFFFFF)                           [DEFAULT]\n");
+    printf("    rgb                       Red, Green, Blue (e.g. rgb(255, 255, 255))\n");
 
     exit(0);
 }
@@ -60,7 +60,9 @@ SCP_CLI_Help()
 void
 SCP_CLI_Version()
 {
-    printf("scolorpicker %s - Jakub Skowron (@reallySmooll) <jakubskowron676@gmail.com>\n", version);
+    sprintf(scpversion, "v%s.%s.%s", scpvmajor, scpvminor, scpvpatch);
+
+    printf("scolorpicker %s - Jakub Skowron (@reallySmooll) <jakubskowron676@gmail.com>\n", scpversion);
 
     exit(0);
 }
@@ -99,5 +101,3 @@ SCP_CLI_HandleArguments(const char *option, const char *value)
         exit(1);
     }
 }
-
-#endif // SCP_CLI_C

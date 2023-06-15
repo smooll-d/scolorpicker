@@ -22,12 +22,40 @@
  * SOFTWARE.
  */
 
-#include "SCP/SCP.h"
+#ifndef SCP_H
+#define SCP_H
 
-int
-main(int argc, char *argv[])
-{
-    SCP_Main(argc, argv);
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/cursorfont.h>
+#include <X11/Xatom.h>
 
-    return 0;
-}
+// SCP Global Variables
+extern Display *dpy;
+
+extern int screen;
+extern int x;
+extern int y;
+
+extern Window root;
+extern Window pixelWindow;
+
+extern XEvent event;
+
+extern XColor color;
+
+extern Cursor cursor;
+
+extern char *hex;
+
+// SCP Global Functions
+void SCP_Init();
+void SCP_GetPixelColor(Display *display, int x, int y, XColor *color);
+void SCP_CreatePixelWindow(Display *display, XColor *color);
+void SCP_ChooseFormat(const char *format);
+void SCP_PrintPixelColor(Display *display, int x, int y, XColor *color);
+void SCP_CopyPixelColor(Display *display, int x, int y, XColor *color);
+void SCP_Close();
+void SCP_Main(int argc, char *argv[]);
+
+#endif // SCP_H
