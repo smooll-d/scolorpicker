@@ -22,12 +22,15 @@
  * SOFTWARE.
  */
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "SCP/SCP.h"
 #include "SCP/SCP_CLI.h"
+#include "SCP/SCP_Clipboard.h"
 
 Display *dpy;
 
@@ -145,32 +148,18 @@ SCP_PrintPixelColor(Display *display, int x, int y, XColor *color)
 }
 
 void
-SCP_CopyPixelColorToClipboard(Display *display, int x, int y, XColor *color)
+SCP_CopyPixelColorToClipboard(Display *display, XEvent *e, int x, int y, XColor *color)
 {
     SCP_GetPixelColor(display, x, y, color);
 
     SCP_ChooseFormat(format);
-
-    FILE *clipboard = popen("xclip -selection clipboard", "w");
-    if (clipboard == NULL)
-    {
-        fprintf(stderr, "Failed to open clipboard!\n");
-        exit(1);
-    }
-
-    size_t len = strlen(hex);
-    if (fwrite(hex, sizeof(char), len, clipboard) < len)
-    {
-        fprintf(stderr, "Failed to write to clipboard!\n");
-        exit(1);
-    }
-
-    pclose(clipboard);
 }
 
 void
 SCP_Close()
 {
+    free(hex);
+
     XUngrabPointer(dpy, CurrentTime);
     XUnmapWindow(dpy, pixelWindow);
     XDestroyWindow(dpy, pixelWindow);
@@ -219,12 +208,16 @@ SCP_Main(int argc, char *argv[])
                     case Button1:
                     {
                         if (outputToTerminal == false)
-                        { SCP_CopyPixelColorToClipboard(dpy, event.xbutton.x, event.xbutton.y, &color); }
+                        {
+                            SCP_CopyPixelColorToClipboard(dpy, &event, event.xbutton.x, event.xbutton.y, &color);
+                            SCP_Clipboard_GetOwners(dpy);
+                            SCP_Close();
+                        }
                         else
-                        { SCP_PrintPixelColor(dpy, event.xbutton.x, event.xbutton.y, &color); }
-
-                        SCP_Close();
-
+                        {
+                            SCP_PrintPixelColor(dpy, event.xbutton.x, event.xbutton.y, &color);
+                            SCP_Close();
+                        }
                         break;
                     }
                     default:
@@ -251,7 +244,5 @@ SCP_Main(int argc, char *argv[])
         }
 
         XUngrabPointer(dpy, CurrentTime);
-
-        XFlush(dpy);
     }
 }
