@@ -11,14 +11,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 
 configure_file(input/CMake_Config.h.in ${CMAKE_SOURCE_DIR}/include/CMake/CMake_Config.h)
 
-set(lib_src
+set(exe_src
     src/SCP_Clipboard.c
     src/SCP_CLI.c
     src/SCP.c
     src/SCP_Main.c
 )
 
-add_executable(${PROJECT_NAME} ${lib_src})
+add_executable(${PROJECT_NAME} ${exe_src})
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
@@ -28,5 +28,5 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} 
     PRIVATE
         X11
-        clipboard
+        Xext
 )

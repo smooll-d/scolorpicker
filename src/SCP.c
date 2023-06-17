@@ -22,15 +22,15 @@
  * SOFTWARE.
  */
 
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "SCP/SCP.h"
 #include "SCP/SCP_CLI.h"
 #include "SCP/SCP_Clipboard.h"
+
+#include <X11/extensions/shape.h>
 
 Display *dpy;
 
@@ -102,6 +102,22 @@ SCP_CreatePixelWindow(Display *display, XColor *color)
 
     pixelWindow = XCreateSimpleWindow(display, root, rootXReturn + 10, rootYReturn + 10, width, height, 0, color->pixel, color->pixel);
 
+    int eventBase, errorBase;
+    if (XShapeQueryExtension(dpy, &eventBase, &errorBase))
+    {
+        Pixmap maskPixmap = XCreatePixmap(display, pixelWindow, width, height, 1);
+
+        // Create a GC (graphics context) for drawing on the mask pixmap
+        GC maskGC = XCreateGC(display, maskPixmap, 0, NULL);
+
+        // Combine the mask pixmap with the window to set the shape
+        XShapeCombineMask(display, pixelWindow, ShapeBounding, 0, 0, maskPixmap, ShapeSet);
+
+        // Free the resources
+        XFreeGC(display, maskGC);
+        XFreePixmap(display, maskPixmap);
+    }
+
     Atom bypassCompositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
     if (bypassCompositor == None)
     {
@@ -141,14 +157,6 @@ SCP_ChooseFormat(const char *format)
 
 void
 SCP_PrintPixelColor(Display *display, int x, int y, XColor *color)
-{
-    SCP_GetPixelColor(display, x, y, color);
-
-    SCP_ChooseFormat(format);
-}
-
-void
-SCP_CopyPixelColorToClipboard(Display *display, XEvent *e, int x, int y, XColor *color)
 {
     SCP_GetPixelColor(display, x, y, color);
 
@@ -209,8 +217,7 @@ SCP_Main(int argc, char *argv[])
                     {
                         if (outputToTerminal == false)
                         {
-                            SCP_CopyPixelColorToClipboard(dpy, &event, event.xbutton.x, event.xbutton.y, &color);
-                            SCP_Clipboard_GetOwners(dpy);
+                            SCP_Clipboard_CopyPixelColor(dpy, event.xbutton.x, event.xbutton.y, &color);
                             SCP_Close();
                         }
                         else

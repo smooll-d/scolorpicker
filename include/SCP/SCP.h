@@ -54,7 +54,6 @@ void SCP_GetPixelColor(Display *display, int x, int y, XColor *color);
 void SCP_CreatePixelWindow(Display *display, XColor *color);
 void SCP_ChooseFormat(const char *format);
 void SCP_PrintPixelColor(Display *display, int x, int y, XColor *color);
-void SCP_CopyPixelColorToClipboard(Display *display, XEvent *e, int x, int y, XColor *color);
 void SCP_Close();
 void SCP_Main(int argc, char *argv[]);
 
