@@ -37,6 +37,8 @@ Display *dpy;
 int screen;
 int x;
 int y;
+int eventBase;
+int errorBase;
 
 Window root;
 Window pixelWindow;
@@ -48,6 +50,11 @@ XColor color;
 Cursor cursor;
 
 char *hex;
+
+Pixmap shapePixmap;
+
+GC shapeGC;
+GC windowGC;
 
 void
 SCP_Init()
@@ -102,20 +109,30 @@ SCP_CreatePixelWindow(Display *display, XColor *color)
 
     pixelWindow = XCreateSimpleWindow(display, root, rootXReturn + 10, rootYReturn + 10, width, height, 0, color->pixel, color->pixel);
 
-    int eventBase, errorBase;
+    windowGC = XCreateGC(display, pixelWindow, 0, NULL);
+
     if (XShapeQueryExtension(dpy, &eventBase, &errorBase))
     {
-        Pixmap maskPixmap = XCreatePixmap(display, pixelWindow, width, height, 1);
+        shapePixmap = XCreatePixmap(display, pixelWindow, width, height, 1);
 
-        // Create a GC (graphics context) for drawing on the mask pixmap
-        GC maskGC = XCreateGC(display, maskPixmap, 0, NULL);
+        shapeGC = XCreateGC(display, shapePixmap, 0, NULL);
 
-        // Combine the mask pixmap with the window to set the shape
-        XShapeCombineMask(display, pixelWindow, ShapeBounding, 0, 0, maskPixmap, ShapeSet);
+        XSetForeground(display, shapeGC, 0);
 
-        // Free the resources
-        XFreeGC(display, maskGC);
-        XFreePixmap(display, maskPixmap);
+        XFillRectangle(display, shapePixmap, shapeGC, 0, 0, width, height);
+
+        XSetForeground(display, shapeGC, 1);
+
+        int corner_radius = 10;
+        XFillArc(display, shapePixmap, shapeGC, 0, 0, 2 * corner_radius, 2 * corner_radius, 90 * 64, 90 * 64);
+        XFillArc(display, shapePixmap, shapeGC, width - 2 * corner_radius, 0, 2 * corner_radius, 2 * corner_radius, 0 * 64, 90 * 64);
+        XFillArc(display, shapePixmap, shapeGC, 0, height - 2 * corner_radius, 2 * corner_radius, 2 * corner_radius, 180 * 64, 90 * 64);
+        XFillArc(display, shapePixmap, shapeGC, width - 2 * corner_radius, height - 2 * corner_radius, 2 * corner_radius, 2 * corner_radius, 270 * 64, 90 * 64);
+
+        XFillRectangle(display, shapePixmap, shapeGC, corner_radius, 0, width - 2 * corner_radius, height);
+        XFillRectangle(display, shapePixmap, shapeGC, 0, corner_radius, width, height - 2 * corner_radius);
+
+        XShapeCombineMask(display, pixelWindow, ShapeBounding, 0, 0, shapePixmap, ShapeSet);
     }
 
     Atom bypassCompositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
@@ -134,6 +151,7 @@ SCP_CreatePixelWindow(Display *display, XColor *color)
     XChangeWindowAttributes(display, pixelWindow, CWOverrideRedirect, &attributes);
 
     XMapWindow(display, pixelWindow);
+    XFlush(display);
 }
 
 void
@@ -170,6 +188,13 @@ SCP_Close()
 
     XUngrabPointer(dpy, CurrentTime);
     XUnmapWindow(dpy, pixelWindow);
+
+    if (XShapeQueryExtension(dpy, &eventBase, &errorBase))
+    {
+        XFreePixmap(dpy, shapePixmap);
+        XFreeGC(dpy, shapeGC);
+    }
+    XFreeGC(dpy, windowGC);
     XDestroyWindow(dpy, pixelWindow);
     XFreeCursor(dpy, cursor);
 
@@ -201,10 +226,10 @@ SCP_Main(int argc, char *argv[])
         }
     }
 
+    XGrabPointer(dpy, root, True, PointerMotionMask | ButtonPressMask, GrabModeAsync, GrabModeAsync, None, cursor, CurrentTime);
+
     while (1)
     {
-        XGrabPointer(dpy, root, True, PointerMotionMask | ButtonPressMask, GrabModeAsync, GrabModeAsync, None, cursor, CurrentTime);
-
         XNextEvent(dpy, &event);
 
         switch (event.type)
@@ -241,15 +266,13 @@ SCP_Main(int argc, char *argv[])
                 y = event.xmotion.y;
 
                 SCP_GetPixelColor(dpy, x, y, &color);
-                XSetForeground(dpy, XDefaultGC(dpy, screen), color.pixel);
-                XFillRectangle(dpy, pixelWindow, XDefaultGC(dpy, screen), 0, 0, 100, 100);
+                XSetForeground(dpy, windowGC, color.pixel);
+                XFillRectangle(dpy, pixelWindow, windowGC, 0, 0, 100, 100);
                 XMoveWindow(dpy, pixelWindow, x + 10, y + 10);
 
                 break;
             }
             default: break;
         }
-
-        XUngrabPointer(dpy, CurrentTime);
     }
 }
