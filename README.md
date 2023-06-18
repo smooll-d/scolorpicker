@@ -1,7 +1,7 @@
 # scolorpicker
 scolorpicker is a color picker application written in C using nothing but Xlib.
 
-This is why scolorpicker can be installed anywhere an X.Org server is installed, is very lightweight with the executable clocking in at just 22k and has very little
+This is why scolorpicker can be installed anywhere an X.Org server is installed, is very lightweight with the executable clocking in at just 27k and has very little
 dependencies.
 
 ## Installation
@@ -13,7 +13,8 @@ If you want to manually build scolorpicker or download it from [Releases](https:
 
 - glibc (C standard library, you almost certainly don't need to install it if you've installed development packages for your distro, e.g. base-devel for Arch Linux)
 - libx11 (scolorpicker needs this library to work)
-- xclip (scolorpicker needs this to make clipboard saving, there are plans to remove this dependency and save to clipboard without any external libraries)
+- xsel (scolorpicker needs this to make clipboard saving, there are plans to remove this dependency and save to clipboard without any external libraries)
+- libxext (scolorpicker needs this library to make the window corners round, if scolorpicker for some reason cannot enable the Shapes extension, the window will default to straight corners)
 
 ---
 
@@ -68,10 +69,13 @@ There are three ways of installing scolorpicker:
 
     Next, build and install scolorpicker:
     ```bash
-    $ sudo make install
+    $ cmake -DINSTALL_SYSTEM_WIDE=YES -S . -B build
+    $ cd build/
+    $ cmake --build .
+    $ sudo cmake --install .
     ```
 
-    And that's it! `make` will build the application automatically and copy the executable into the `/usr/bin/` directory so you can use it like any other command without having to cd into the directory and running it from there!
+    And that's it! `cmake` will build the application automatically and copy the executable into the `/usr/bin/` directory so you can use it like any other command without having to cd into the directory and running it from there!
 
 ## Usage
 Usage is pretty straight-forward, you start the application and click on the pixel you want to get the color of and it will be copied to your clipboard.
@@ -90,7 +94,7 @@ Here's a list of features already implemented and ones I would like to implement
 
 - [X] Small window displaying the color of the current pixel (v1.0.0)
 - [X] Color code in hexadecimal (v1.0.0)
-- [X] Color output to clipboard using `xclip` (v1.0.0)
+- [X] Color output to clipboard using `xclip` (v1.0.0) **NOTE: As of v1.2.0 `xclip` is no longer used in favor of `xsel` to fix a bug**
 - [X] Color code output in different modes (RGB, HSV, HSL, etc.) (v1.1.0)
 
     Available modes:
@@ -98,5 +102,6 @@ Here's a list of features already implemented and ones I would like to implement
     - `rgb` - Red, Green, Blue
 
 - [X] Ability to choose to output the color code to the terminal instead of the clipboard (v1.1.0)
+- [X] Rounded window corners (v1.2.0)
 - [ ] Saving to clipboard without the use of `xclip`
 - [ ] System tray so you don't have to enter a command in the terminal to get the color of a pixel (which, I'll admit is pretty dumb)
