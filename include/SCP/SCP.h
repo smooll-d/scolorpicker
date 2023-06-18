@@ -36,6 +36,8 @@ extern Display *dpy;
 extern int screen;
 extern int x;
 extern int y;
+extern int eventBase;
+extern int errorBase;
 
 extern Window root;
 extern Window pixelWindow;
@@ -47,6 +49,11 @@ extern XColor color;
 extern Cursor cursor;
 
 extern char *hex;
+
+extern Pixmap shapePixmap;
+
+extern GC shapeGC;
+extern GC windowGC;
 
 // SCP Global Functions
 void SCP_Init();
