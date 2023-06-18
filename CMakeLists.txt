@@ -6,7 +6,9 @@ project(scolorpicker
     LANGUAGES C
 )
 
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+option(INSTALL_SYSTEM_WIDE "Install scolorpicker in /usr/bin" NO)
+
+#set(CMAKE_BUILD_TYPE RelWithDebInfo)
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 
 configure_file(input/CMake_Config.h.in ${CMAKE_SOURCE_DIR}/include/CMake/CMake_Config.h)
@@ -29,4 +31,15 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         X11
         Xext
+)
+
+if(NOT INSTALL_SYSTEM_WIDE)
+    set(CMAKE_INSTALL_PREFIX install)
+else()
+    set(CMAKE_INSTALL_PREFIX /usr/bin)
+endif()
+
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME
+    DESTINATION .
 )
