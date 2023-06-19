@@ -30,7 +30,7 @@
 // CLI Global Variables
 extern bool outputToTerminal;
 
-extern char scpversion[];
+extern char scpversion[7];
 
 extern char *format;
 
