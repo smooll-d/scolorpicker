@@ -24,7 +24,7 @@
 
 #define SCOLORPICKER_VERSION_MAJOR "1"
 #define SCOLORPICKER_VERSION_MINOR "2"
-#define SCOLORPICKER_VERSION_PATCH "0"
+#define SCOLORPICKER_VERSION_PATCH "1"
 
 extern char *scpvmajor;
 extern char *scpvminor;
