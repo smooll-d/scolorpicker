@@ -1,6 +1,10 @@
 # Release notes
 Release notes for scolorpicker.
 
+## v1.2.1 | 19/06/2023
+**Fixed**
+- Buffer overflow error when using the -v option if you installed from the AUR
+
 ## v1.2.0 | 18/06/2023
 **Added**
 - Roundiness to the window

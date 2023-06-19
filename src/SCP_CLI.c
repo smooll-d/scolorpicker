@@ -60,7 +60,7 @@ SCP_CLI_Help()
 void
 SCP_CLI_Version()
 {
-    sprintf(scpversion, "v%s.%s.%s", scpvmajor, scpvminor, scpvpatch);
+    snprintf(scpversion, sizeof(scpversion), "v%s.%s.%s", scpvmajor, scpvminor, scpvpatch);
 
     printf("scolorpicker %s - Jakub Skowron (@reallySmooll) <jakubskowron676@gmail.com>\n", scpversion);
 
