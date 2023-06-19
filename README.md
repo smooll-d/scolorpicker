@@ -103,5 +103,5 @@ Here's a list of features already implemented and ones I would like to implement
 
 - [X] Ability to choose to output the color code to the terminal instead of the clipboard (v1.1.0)
 - [X] Rounded window corners (v1.2.0)
-- [ ] Saving to clipboard without the use of `xclip`
+- [ ] Saving to clipboard without the use of ~~`xclip`~~ `xsel`
 - [ ] System tray so you don't have to enter a command in the terminal to get the color of a pixel (which, I'll admit is pretty dumb)
