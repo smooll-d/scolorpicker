@@ -15,8 +15,7 @@ namespace SCP
                 std::string_view output = "terminal";
             };
 
-            CLI(int argc, char* argv[]);
-
+            void Create(int argc, char* argv[]);
             void HandleParameters(std::string_view parameter);
             void ShowHelp();
             void ShowVersion();
@@ -27,7 +26,7 @@ namespace SCP
 
             std::vector<std::string_view> mParameters;
 
-            Info* mInfo;
+            Info mInfo;
     };
 }
 
