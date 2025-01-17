@@ -9,23 +9,15 @@
 
 namespace SCP
 {
-    CLI::CLI(int argc, char* argv[])
-     : mParameterCount{argc},
-       mParameters{argv, argv + argc}
+    void CLI::Create(int argc, char* argv[])
     {
-        if (mParameterCount <= 1)
-        {
-            std::cerr << "TODO: not implemented!\n";
+        mParameterCount = argc;
+        mParameters = { argv, argv + argc };
 
-            std::exit(-1);
-        }
-        else
+        for (const auto& parameter : mParameters)
         {
-            for (int i = 1; i < mParameterCount; i++)
-            {
-                if (mParameters.at(i).starts_with("--") || mParameters.at(i).starts_with("-"))
-                { HandleParameters(mParameters.at(i)); }
-            }
+            if (parameter.starts_with("--") || parameter.starts_with("-"))
+            { HandleParameters(parameter); }
         }
     }
 
@@ -46,35 +38,39 @@ namespace SCP
         else if (parameter == "--format" || parameter == "-f")
         {
             if (mFindArgument("hex"))
-            { mInfo->format = "hex"; }
+            { mInfo.format = "hex"; }
             else if (mFindArgument("lhex"))
-            { mInfo->format = "lhex"; }
+            { mInfo.format = "lhex"; }
             else if (mFindArgument("rgb"))
-            { mInfo->format = "rgb"; }
+            { mInfo.format = "rgb"; }
             else
             {
                 std::cout << "Unknown format!\n";
                 std::cout << "Color will be formatted in \"hex\"\n";
             }
+
+            return;
         }
         else if (parameter == "--output" || parameter == "-o")
         {
             if (mFindArgument("terminal"))
-            { mInfo->output = "terminal"; }
+            { mInfo.output = "terminal"; }
             else if (mFindArgument("clipboard"))
-            { mInfo->output = "clipboard"; }
+            { mInfo.output = "clipboard"; }
             else
             {
                 std::cout << "Unknown output!\n";
                 std::cout << "Color will be output to \"terminal\"\n";
             }
+
+            return;
         }
         else
         {
             std::cerr << "Unknown parameter: \"" << parameter << "\"!\n";
             std::cerr << "See \"scolorpicker --help\" for usage.\n";
 
-            std::exit(-1);
+            std::exit(1);
         }
     }
 
