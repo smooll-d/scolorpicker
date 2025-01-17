@@ -53,6 +53,4 @@ dkms.conf
 
 # Repo
 build/
-build_release/
-compile_commands.json
 .cache/

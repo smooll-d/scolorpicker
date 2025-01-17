@@ -1,46 +1,28 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.31)
 
 project(scolorpicker
-    VERSION 1.2.1
-    DESCRIPTION "smooll Color Picker for X11"
-    LANGUAGES C
+    VERSION 2.0.17012025.0
+    DESCRIPTION "smooll Color Picker"
+    LANGUAGES CXX
 )
 
-option(INSTALL_SYSTEM_WIDE "Install scolorpicker in /usr/bin" NO)
+add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 
-configure_file(input/CMake_Config.h.in ${CMAKE_SOURCE_DIR}/include/CMake/CMake_Config.h)
+configure_file(input/metadata.hpp.in ${CMAKE_SOURCE_DIR}/include/SCP/metadata.hpp)
 
-set(exe_src
-    src/SCP_Clipboard.c
-    src/SCP_CLI.c
-    src/SCP.c
-    src/SCP_Main.c
-)
+file(GLOB_RECURSE exe_src "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
-add_executable(${PROJECT_NAME} ${exe_src})
+add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 
-target_include_directories(${PROJECT_NAME}
-    PRIVATE
-        ${CMAKE_SOURCE_DIR}/include
+target_compile_options(${CMAKE_PROJECT_NAME} BEFORE PRIVATE -g)
+
+target_include_directories(${CMAKE_PROJECT_NAME}
+    PRIVATE "${CMAKE_SOURCE_DIR}/include"
 )
 
 target_link_libraries(${PROJECT_NAME} 
-    PRIVATE
-        X11
-        Xext
+    PRIVATE SDL3::SDL3
 )
-
-if(NOT INSTALL_SYSTEM_WIDE)
-    set(CMAKE_INSTALL_PREFIX install)
-    install(TARGETS ${PROJECT_NAME}
-        RUNTIME
-        DESTINATION .
-    )
-else()
-    set(CMAKE_INSTALL_PREFIX /usr)
-    install(TARGETS ${PROJECT_NAME}
-        RUNTIME
-    )
-endif()
