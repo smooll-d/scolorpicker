@@ -24,6 +24,10 @@ target_include_directories(${CMAKE_PROJECT_NAME}
     PRIVATE "${CMAKE_SOURCE_DIR}/include"
 )
 
-target_link_libraries(${PROJECT_NAME} 
-    PRIVATE SDL3::SDL3
-)
+if (UNIX)
+    target_link_libraries(${PROJECT_NAME} 
+        PRIVATE
+            SDL3::SDL3
+            X11
+    )
+endif()

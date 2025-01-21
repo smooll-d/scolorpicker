@@ -1,5 +1,6 @@
-#include "SDL3/SDL_init.h"
 #include <SCP/SCP_Window.hpp>
+#include <SCP/SCP_Utils.hpp>
+
 #include <SCP/metadata.hpp>
 
 #include <format>
@@ -8,7 +9,17 @@ namespace SCP
 {
     Window::Window()
      : mWindow{nullptr},
-       mRenderer{nullptr}
+       mRenderer{nullptr},
+       mDisplayID{},
+       mCurrentDisplay{nullptr},
+       mMouse{},
+       mPositionOffset{10.0f},
+       mX{0},
+       mY{0},
+       mW{100},
+       mH{100},
+       mPixels{},
+       mPixel{}
     { }
 
     SDL_AppResult Window::Initialize()
@@ -34,21 +45,36 @@ namespace SCP
             return SDL_APP_FAILURE;
         }
 
+        mMouse.SetCursor();
+
+        mDisplayID = SDL_GetDisplayForWindow(mWindow);
+        mCurrentDisplay = SDL_GetDesktopDisplayMode(mDisplayID);
+
         return SDL_APP_CONTINUE;
     }
 
-    SDL_AppResult Window::Loop()
+    SDL_AppResult Window::Iterate()
     {
-        const double now = ((double)SDL_GetTicks()) / 1000.0;
+        mMouse.GetPosition();
+        SDL_GetWindowPosition(mWindow, &mX, &mY);
 
-        const float red = (float)(0.5 + 0.5 * SDL_sin(now));
-        const float green = (float)(0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 2 / 3));
-        const float blue = (float)(0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 4 / 3));
+        mPixel.GetPixel(mMouse.x, mMouse.y);
+        mPixels = Utils::RGB(mPixel.pixels);
 
-        SDL_SetRenderDrawColorFloat(mRenderer, red, green, blue, SDL_ALPHA_OPAQUE_FLOAT);
+        if (mMouse.GetButton() == SDL_BUTTON_LEFT)
+        { SDL_Log("X: %f, Y: %f", mMouse.x, mMouse.y); }
 
+        if (mX + mW >= mCurrentDisplay->w)
+        { SDL_SetWindowPosition(mWindow, (mMouse.x + mPositionOffset) - mW, mMouse.y + mPositionOffset); }
+        else if (mY + mH >= mCurrentDisplay->h)
+        { SDL_SetWindowPosition(mWindow, mMouse.x + mPositionOffset, (mMouse.y + mPositionOffset) - mH); }
+        else
+        { SDL_SetWindowPosition(mWindow, mMouse.x + mPositionOffset, mMouse.y + mPositionOffset); }
+
+        SDL_SyncWindow(mWindow);
+
+        SDL_SetRenderDrawColor(mRenderer, mPixels.at(0), mPixels.at(1), mPixels.at(2), SDL_ALPHA_OPAQUE_FLOAT);
         SDL_RenderClear(mRenderer);
-
         SDL_RenderPresent(mRenderer);
 
         return SDL_APP_CONTINUE;

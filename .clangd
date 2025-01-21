@@ -1,0 +1,2 @@
+CompileFlags:
+    Remove: [-fmodule-mapper=CMakeFiles/scolorpicker.dir/src/SCP_CLI.cpp.o.modmap]

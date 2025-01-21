@@ -1,3 +1,4 @@
+#include "SDL3/SDL_mouse.h"
 #include <SCP/SCP_CLI.hpp>
 #include <SCP/SCP_Window.hpp>
 
@@ -8,9 +9,9 @@
 SCP::CLI cli;
 SCP::Window window;
 
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char* argv[])
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
-    cli.Create(argc, argv);
+    cli.Initialize(argc, argv);
 
     window.Initialize();
     window.Create();
@@ -18,19 +19,24 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char* argv[])
     return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
-    if (event->type == SDL_EVENT_QUIT)
-    { return SDL_APP_SUCCESS; }
+    switch (event->type)
+    {
+        case SDL_EVENT_QUIT:
+            return SDL_APP_SUCCESS;
+        default:
+            return SDL_APP_CONTINUE;
+    }
 
     return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult SDL_AppIterate(void *appstate)
+SDL_AppResult SDL_AppIterate(void* appstate)
 {
-    window.Loop();
+    window.Iterate();
 
     return SDL_APP_CONTINUE;
 }
 
-void SDL_AppQuit(void *appstate, SDL_AppResult result) { }
+void SDL_AppQuit(void* appstate, SDL_AppResult result) { }
