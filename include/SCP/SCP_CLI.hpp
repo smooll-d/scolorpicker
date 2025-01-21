@@ -3,6 +3,7 @@
 
 #include <string_view>
 #include <vector>
+#include <iterator>
 
 namespace SCP
 {
@@ -15,16 +16,21 @@ namespace SCP
                 std::string_view output = "terminal";
             };
 
-            void Create(int argc, char* argv[]);
+            CLI();
+
+            void Initialize(int argc, char* argv[]);
             void HandleParameters(std::string_view parameter);
             void ShowHelp();
             void ShowVersion();
         private:
-            bool mFindArgument(std::string_view argument);
+            bool mFindArgument(std::string_view option, std::string_view argument);
 
             int mParameterCount;
 
             std::vector<std::string_view> mParameters;
+
+            std::vector<std::string_view>::iterator mParameterIterator;
+            std::iterator_traits<decltype(mParameterIterator)>::difference_type mParameterDistance;
 
             Info mInfo;
     };
