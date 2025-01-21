@@ -5,8 +5,10 @@
 
 namespace SCP
 {
-    std::string tredbg(std::string_view str);
-    std::string tredfg(std::string_view str);
+    namespace Utils
+    {
+        std::string tred(std::string_view str, std::string_view ground = "background");
+    }
 }
 
 #endif // SCP_UTILS
