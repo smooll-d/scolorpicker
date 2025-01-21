@@ -6,10 +6,18 @@
 #include <cstdlib>
 #include <iostream>
 #include <format>
+#include <iterator>
 
 namespace SCP
 {
-    void CLI::Create(int argc, char* argv[])
+    CLI::CLI()
+     : mParameterCount{0},
+       mParameters{},
+       mParameterIterator{},
+       mParameterDistance{0}
+    { }
+
+    void CLI::Initialize(int argc, char* argv[])
     {
         mParameterCount = argc;
         mParameters = { argv, argv + argc };
@@ -37,11 +45,11 @@ namespace SCP
         }
         else if (parameter == "--format" || parameter == "-f")
         {
-            if (mFindArgument("hex"))
+            if (mFindArgument(parameter, "hex"))
             { mInfo.format = "hex"; }
-            else if (mFindArgument("lhex"))
+            else if (mFindArgument(parameter, "lhex"))
             { mInfo.format = "lhex"; }
-            else if (mFindArgument("rgb"))
+            else if (mFindArgument(parameter, "rgb"))
             { mInfo.format = "rgb"; }
             else
             {
@@ -53,9 +61,9 @@ namespace SCP
         }
         else if (parameter == "--output" || parameter == "-o")
         {
-            if (mFindArgument("terminal"))
+            if (mFindArgument(parameter, "terminal"))
             { mInfo.output = "terminal"; }
-            else if (mFindArgument("clipboard"))
+            else if (mFindArgument(parameter, "clipboard"))
             { mInfo.output = "clipboard"; }
             else
             {
@@ -76,9 +84,9 @@ namespace SCP
 
     void CLI::ShowHelp()
     {
-        std::string whiteUppercase = tredbg("#FF0000");
-        std::string whiteLowercase = tredbg("#ff0000");
-        std::string whiteRGB = tredbg("rgb(255, 0, 0)");
+        std::string whiteUppercase = Utils::tred("#FF0000");
+        std::string whiteLowercase = Utils::tred("#ff0000");
+        std::string whiteRGB = Utils::tred("rgb(255, 0, 0)");
 
         std::cout << std::format(R"(Usage: scolorpicker [options]
 
@@ -101,13 +109,18 @@ Output:
 
     void CLI::ShowVersion()
     {
-        std::string heart = tredfg("\u2665");
+        std::string heart = Utils::tred("\u2665", "foreground");
 
         std::cout << std::format(R"(scolorpicker v{}.{}.{}
 Made with {} by Jakub Skowron (@smooll-d))", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH, heart)
                   << '\n';
     }
 
-    bool CLI::mFindArgument(std::string_view argument)
-    { return std::find(mParameters.begin(), mParameters.end(), argument) != mParameters.end(); }
+    bool CLI::mFindArgument(std::string_view option, std::string_view argument)
+    {
+        mParameterIterator = std::find(mParameters.begin(), mParameters.end(), option);
+        mParameterDistance = std::distance(mParameters.begin(), mParameterIterator);
+
+        return mParameters.at(mParameterDistance + 1) == argument;
+    }
 }
