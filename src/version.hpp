@@ -1,0 +1,9 @@
+#ifndef SCP_VERSION
+#define SCP_VERSION
+
+#define SCP_VERSION_MAJOR "2"
+#define SCP_VERSION_MINOR "0"
+#define SCP_VERSION_PATCH "0"
+#define SCP_VERSION_TWEAK ""
+
+#endif // SCP_VERSION

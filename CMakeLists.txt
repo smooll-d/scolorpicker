@@ -1,44 +1,26 @@
 cmake_minimum_required(VERSION 3.31)
 
 project(scolorpicker
-    VERSION 2.0.18012025.0
+    VERSION 2.0.0
     DESCRIPTION "smooll Color Picker"
     LANGUAGES CXX
 )
 
-include(FetchContent)
-
-FetchContent_Declare(
-    SDL3
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-    GIT_TAG        release-3.2.0
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
-    OVERRIDE_FIND_PACKAGE
-)
-
-FetchContent_MakeAvailable(sdl3)
-
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_COLOR_DIAGNOSTICS ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS True)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
-configure_file(input/metadata.hpp.in ${CMAKE_SOURCE_DIR}/include/SCP/metadata.hpp)
+configure_file("${CMAKE_SOURCE_DIR}/cmake/version.hpp.in" "${CMAKE_SOURCE_DIR}/src/version.hpp")
 
-file(GLOB_RECURSE exe_src "${CMAKE_SOURCE_DIR}/src/*.cpp")
+include(cmake/setup_sdl.cmake)
+include(cmake/setup_screen_capture_lite.cmake)
+
+file(GLOB_RECURSE exe_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 
-target_compile_options(${CMAKE_PROJECT_NAME} BEFORE PRIVATE -g)
-
-target_include_directories(${CMAKE_PROJECT_NAME}
-    PRIVATE "${CMAKE_SOURCE_DIR}/include"
-)
-
-if (UNIX)
-    target_link_libraries(${PROJECT_NAME} 
-        PRIVATE
-            SDL3::SDL3
-            X11
-    )
-endif()
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf Screen_Capturelib)

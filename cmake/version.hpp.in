@@ -1,9 +1,9 @@
-#ifndef SCP_METADATA
-#define SCP_METADATA
+#ifndef SCP_VERSION
+#define SCP_VERSION
 
 #define SCP_VERSION_MAJOR "@scolorpicker_VERSION_MAJOR@"
 #define SCP_VERSION_MINOR "@scolorpicker_VERSION_MINOR@"
 #define SCP_VERSION_PATCH "@scolorpicker_VERSION_PATCH@"
 #define SCP_VERSION_TWEAK "@scolorpicker_VERSION_TWEAK@"
 
-#endif // SCP_METADATA
+#endif // SCP_VERSION

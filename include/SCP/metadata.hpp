@@ -1,9 +1,0 @@
-#ifndef SCP_METADATA
-#define SCP_METADATA
-
-#define SCP_VERSION_MAJOR "2"
-#define SCP_VERSION_MINOR "0"
-#define SCP_VERSION_PATCH "18012025"
-#define SCP_VERSION_TWEAK "0"
-
-#endif // SCP_METADATA

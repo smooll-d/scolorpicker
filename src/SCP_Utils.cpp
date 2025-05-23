@@ -1,7 +1,6 @@
-#include <SCP/SCP_Utils.hpp>
+#include "SCP_Utils.hpp"
 
 #include <sstream>
-#include <vector>
 
 namespace SCP
 {
@@ -18,8 +17,5 @@ namespace SCP
 
             return ss.str();
         }
-
-        std::vector<int> RGB(std::vector<unsigned short> colors)
-        { return { colors.at(0) / 256, colors.at(1) / 256, colors.at(2) / 256 }; }
-    }
-}
+    } // namespace Utils
+} // namespace SCP
