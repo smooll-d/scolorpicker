@@ -9,21 +9,21 @@ namespace SCP
 {
     class CLI
     {
-        public:
+        private:
             struct Info
             {
                 std::string format = "hex";
                 std::string output = "terminal";
             };
+        public:
+            CLI(int argc, char* argv[]);
 
-            CLI();
-
-            void Initialize(int argc, char* argv[]);
-            void HandleParameters(std::string parameter);
-            void ShowHelp();
-            void ShowVersion();
+            const Info& GetInfo() { return _Info; }
         private:
             bool _FindArgument(std::string option, std::string argument);
+            void _ShowHelp();
+            void _ShowVersion();
+            void _HandleParameters(std::string parameter);
 
             int _ParameterCount;
 
