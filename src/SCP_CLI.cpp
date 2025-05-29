@@ -10,36 +10,30 @@
 
 namespace SCP
 {
-    CLI::CLI()
-     : _ParameterCount{0},
-       _Parameters{},
+    CLI::CLI(int argc, char* argv[])
+     : _ParameterCount{argc},
+       _Parameters{argv, argv + argc},
        _ParameterIterator{},
        _ParameterDistance{0}
-    { }
-
-    void CLI::Initialize(int argc, char* argv[])
     {
-        _ParameterCount = argc;
-        _Parameters = { argv, argv + argc };
-
         for (const auto& parameter : _Parameters)
         {
             if (parameter.starts_with("--") || parameter.starts_with("-"))
-            { HandleParameters(parameter); }
+            { _HandleParameters(parameter); }
         }
     }
 
-    void CLI::HandleParameters(std::string parameter)
+    void CLI::_HandleParameters(std::string parameter)
     {
         if (parameter == "--help" || parameter == "-h")
         {
-            ShowHelp();
+            _ShowHelp();
 
             std::exit(0);
         }
         else if (parameter == "--version" || parameter == "-v")
         {
-            ShowVersion();
+            _ShowVersion();
 
             std::exit(0);
         }
@@ -82,7 +76,7 @@ namespace SCP
         }
     }
 
-    void CLI::ShowHelp()
+    void CLI::_ShowHelp()
     {
         std::string uppercase = Utils::tred("#FF0000");
         std::string lowercase = Utils::tred("#ff0000");
@@ -107,7 +101,7 @@ Output:
                   << '\n';
     }
 
-    void CLI::ShowVersion()
+    void CLI::_ShowVersion()
     {
         std::string heart = Utils::tred("<3", "foreground");
 
