@@ -6,7 +6,7 @@ set(BUILD_CSHARP OFF)
 FetchContent_Declare(
     screen_capture_lite
     GIT_REPOSITORY https://github.com/smasherprog/screen_capture_lite.git
-    GIT_TAG        v.91
+    GIT_TAG        17.1.1368
     GIT_SHALLOW    TRUE
     GIT_PROGRESS   TRUE
     OVERRIDE_FIND_PACKAGE

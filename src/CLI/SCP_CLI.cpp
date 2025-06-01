@@ -1,5 +1,5 @@
 #include "SCP_CLI.hpp"
-#include "SCP_Utils.hpp"
+#include "Utils/SCP_Utils.hpp"
 #include "version.hpp"
 
 #include <algorithm>
@@ -78,9 +78,9 @@ namespace SCP
 
     void CLI::_ShowHelp()
     {
-        std::string uppercase = Utils::tred("#FF0000");
-        std::string lowercase = Utils::tred("#ff0000");
-        std::string rgb = Utils::tred("rgb(255, 0, 0)");
+        std::string uppercase = Utils::TRed("#FF0000");
+        std::string lowercase = Utils::TRed("#ff0000");
+        std::string rgb = Utils::TRed("rgb(255, 0, 0)");
 
         std::cout << std::format(R"(Usage: scolorpicker [Options]
 
@@ -103,7 +103,7 @@ Output:
 
     void CLI::_ShowVersion()
     {
-        std::string heart = Utils::tred("<3", "foreground");
+        std::string heart = Utils::TRed("<3", "foreground");
 
         std::cout << std::format(R"(scolorpicker v{}.{}.{}
 Made with {} by Jakub Skowron (@smooll-d))", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH, heart)
