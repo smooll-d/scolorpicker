@@ -55,3 +55,5 @@ dkms.conf
 build/
 .cache/
 .clangd
+launch_weston.sh
+launch_colorpicker.sh
