@@ -1,10 +1,10 @@
-#include "SCP_Utils.hpp"
+#include "Utils.hpp"
 
 #include <SDL3/SDL.h>
 
 #include <sstream>
 
-namespace SCP
+namespace scp
 {
     namespace Utils
     {
@@ -20,7 +20,7 @@ namespace SCP
             return ss.str();
         }
 
-        void TestSDL(SDL_Renderer* renderer)
+        void TestSDL(SDL_Renderer *renderer)
         {
             const double now = ((double)SDL_GetTicks()) / 1000.0;
 
@@ -31,4 +31,4 @@ namespace SCP
             SDL_SetRenderDrawColorFloat(renderer, red, green, blue, SDL_ALPHA_OPAQUE_FLOAT);
         }
     } // namespace Utils
-} // namespace SCP
+} // namespace scp

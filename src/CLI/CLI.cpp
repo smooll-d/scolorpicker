@@ -1,5 +1,5 @@
-#include "SCP_CLI.hpp"
-#include "Utils/SCP_Utils.hpp"
+#include "CLI.hpp"
+#include "Utils/Utils.hpp"
 #include "version.hpp"
 
 #include <algorithm>
@@ -8,15 +8,15 @@
 #include <iostream>
 #include <iterator>
 
-namespace SCP
+namespace scp
 {
-    CLI::CLI(int argc, char* argv[])
+    CLI::CLI(int argc, char *argv[])
      : _ParameterCount{argc},
        _Parameters{argv, argv + argc},
        _ParameterIterator{},
        _ParameterDistance{0}
     {
-        for (const auto& parameter : _Parameters)
+        for (const auto &parameter : _Parameters)
         {
             if (parameter.starts_with("--") || parameter.starts_with("-"))
             { _HandleParameters(parameter); }
@@ -117,4 +117,4 @@ Made with {} by Jakub Skowron (@smooll-d))", SCP_VERSION_MAJOR, SCP_VERSION_MINO
 
         return _Parameters.at(_ParameterDistance + 1) == argument;
     }
-}
+} // namespace scp

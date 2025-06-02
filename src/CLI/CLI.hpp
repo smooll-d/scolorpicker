@@ -5,20 +5,20 @@
 #include <vector>
 #include <iterator>
 
-namespace SCP
+namespace scp
 {
     class CLI
     {
-        private:
+        public:
             struct Info
             {
                 std::string format = "hex";
                 std::string output = "terminal";
             };
-        public:
-            CLI(int argc, char* argv[]);
 
-            const Info& GetInfo() { return _Info; }
+            CLI(int argc, char *argv[]);
+
+            const Info &GetInfo() { return _Info; }
         private:
             bool _FindArgument(std::string option, std::string argument);
             void _ShowHelp();
@@ -34,6 +34,6 @@ namespace SCP
 
             Info _Info;
     };
-} // namespace SCP
+} // namespace scp
 
 #endif // SCP_CLI
