@@ -1,4 +1,5 @@
-#include "CLI/SCP_CLI.hpp"
+#include "CLI/CLI.hpp"
+#include "Screenshot/Screenshot.hpp"
 #include "SDL3/SDL_error.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_oldnames.h"
@@ -6,13 +7,15 @@
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_surface.h"
 #include "SDL3/SDL_video.h"
-#include "Utils/SCP_Utils.hpp"
+#include "Utils/Utils.hpp"
 #include "version.hpp"
 #include <X11/X.h>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <memory>
 #include <strings.h>
 
 #define SDL_MAIN_USE_CALLBACKS
@@ -25,19 +28,11 @@
 #include <cstdlib>
 #include <iostream>
 
-struct SCPImage
-{
-    int width;
-    int height;
-    std::uint8_t* pixels;
-    int pitch;
-};
+static SDL_Window *window = nullptr;
+static SDL_Renderer *renderer = nullptr;
+static SDL_Texture *texture = nullptr;
 
-static SDL_Window* window = nullptr;
-static SDL_Renderer* renderer = nullptr;
-static SDL_Texture* texture = nullptr;
-
-static SCPImage image {};
+static scp::Image::Info image {};
 
 static unsigned CountTrailingZeros(int number)
 {
@@ -63,7 +58,7 @@ static unsigned CountTrailingZeros(int number)
     return bits;
 }
 
-static std::uint8_t* CopyAndConvertImage(XImage* image)
+static void CopyAndConvertImage(scp::Image::Info &image)
 {
     /* This is the function that will convert our image from one format to another.
      *
@@ -76,35 +71,41 @@ static std::uint8_t* CopyAndConvertImage(XImage* image)
      * Finally we place the isolated pixel color in the correct position in our buffer.
      */
 
-    int bytesPerPixel = image->bits_per_pixel / 8;
+    int bytesPerPixel = image.bitsPerPixel / 8;
 
-    std::uint8_t* newPixels = new std::uint8_t[image->width * image->height * bytesPerPixel];
+    uint8_t *newPixels = new std::uint8_t[image.width * image.height * bytesPerPixel];
 
-    for (int x = 0; x < image->width; x++)
+    for (int x = 0; x < image.width; x++)
     {
-        for (int y = 0; y < image->height; y++)
+        for (int y = 0; y < image.height; y++)
         {
-            // NOTE: For some reason XGetPixel() doesn't exist, so instead of using that, we'll just manually expand the macro
-            unsigned long pixel = image->f.get_pixel(image, x, y);
+            std::size_t offset = y * image.pitch + x * bytesPerPixel;
 
-            unsigned char blue = (pixel & image->blue_mask) >> CountTrailingZeros(image->blue_mask);
-            unsigned char green = (pixel & image->green_mask) >> CountTrailingZeros(image->green_mask);
-            unsigned char red = (pixel & image->red_mask) >> CountTrailingZeros(image->red_mask);
+            uint32_t pixel = 0;
 
-            newPixels[(x + image->width * y) * bytesPerPixel] = red;
-            newPixels[(x + image->width * y) * bytesPerPixel + 1] = green;
-            newPixels[(x + image->width * y) * bytesPerPixel + 2] = blue;
-            newPixels[(x + image->width * y) * bytesPerPixel + 3] = 255;
+            for (int i = 0; i < bytesPerPixel; i++)
+            {
+                pixel |= static_cast<uint32_t>(image.pixels[offset + i]) << (i * 8);
+            }
+
+            uint8_t blue = (pixel & image.blueMask) >> CountTrailingZeros(image.blueMask);
+            uint8_t green = (pixel & image.greenMask) >> CountTrailingZeros(image.greenMask);
+            uint8_t red = (pixel & image.redMask) >> CountTrailingZeros(image.redMask);
+
+            newPixels[offset] = red;
+            newPixels[offset + 1] = green;
+            newPixels[offset + 2] = blue;
+            newPixels[offset + 3] = 255;
         }
     }
 
-    return newPixels;
+    image.pixels = newPixels;
 }
 
 static void TakeScreenshot()
 {
     // Establish connection to X server
-    Display* display = XOpenDisplay(nullptr);
+    Display *display = XOpenDisplay(nullptr);
     if (!display)
     {
         std::cerr << "Failed to open X display!\n";
@@ -131,7 +132,7 @@ static void TakeScreenshot()
     }
 
     // Take a screenshot
-    XImage* screenshot = XGetImage(display, root, 0, 0, rootAttributes.width, rootAttributes.height, AllPlanes, ZPixmap);
+    XImage *screenshot = XGetImage(display, root, 0, 0, rootAttributes.width, rootAttributes.height, AllPlanes, ZPixmap);
     if (!screenshot)
     {
         std::cerr << "Failed to take screenshot!\n";
@@ -142,8 +143,13 @@ static void TakeScreenshot()
     // Copy pixels from our screenshot into a buffer we control and convert them into one format
     image.width = screenshot->width;
     image.height = screenshot->height;
-    image.pixels = CopyAndConvertImage(screenshot);
     image.pitch = screenshot->bytes_per_line;
+    image.bitsPerPixel = screenshot->bits_per_pixel;
+    image.redMask = screenshot->red_mask;
+    image.greenMask = screenshot->green_mask;
+    image.blueMask = screenshot->blue_mask;
+    image.pixels = reinterpret_cast<uint8_t*>(screenshot->data);
+    CopyAndConvertImage(image);
 
     // Destroy screenshot as it is not needed anymore once we transfer it to an SDL_image
     // NOTE: For some reason XDestroyImage() doesn't exist, so instead of using that, we'll just manually expand the macro
@@ -153,10 +159,10 @@ static void TakeScreenshot()
     XCloseDisplay(display);
 }
 
-static SDL_Texture* CreateTextureFromScreenshot()
+static SDL_Texture *CreateTextureFromScreenshot()
 {
     // Create surface from screenshot data
-    SDL_Surface* surface = SDL_CreateSurfaceFrom(image.width, image.height, SDL_PIXELFORMAT_RGBA32, image.pixels, image.pitch);
+    SDL_Surface *surface = SDL_CreateSurfaceFrom(image.width, image.height, SDL_PIXELFORMAT_RGBA32, image.pixels, image.pitch);
     if (!surface)
     {
         SDL_Log("Failed to create surface from screenshot: %s", SDL_GetError());
@@ -165,7 +171,7 @@ static SDL_Texture* CreateTextureFromScreenshot()
     }
 
     // Create texture from surface
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (!texture)
     {
         SDL_Log("Failed to create texture from screenshot: %s", SDL_GetError());
@@ -176,12 +182,15 @@ static SDL_Texture* CreateTextureFromScreenshot()
     // Destroy surface as it is not needed anymore
     SDL_DestroySurface(surface);
 
+    // Delete image.pixels as it is no longer needed and will cause a memory leak if not dealt with.
+    delete[] image.pixels;
+
     return texture;
 }
 
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-    SCP::CLI cli(argc, argv);
+    scp::CLI cli(argc, argv);
 
     TakeScreenshot();
 
@@ -194,7 +203,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("scolorpicker", 1280, 720, SDL_WINDOW_FULLSCREEN, &window, &renderer))
+    // if (!SDL_CreateWindowAndRenderer("scolorpicker", 1280, 720, SDL_WINDOW_FULLSCREEN, &window, &renderer))
+    if (!SDL_CreateWindowAndRenderer("scolorpicker", 1280, 720, 0, &window, &renderer))
     {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
 
@@ -231,6 +241,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    // scp::Utils::TestSDL(renderer);
 
     SDL_RenderClear(renderer);
 

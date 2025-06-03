@@ -2,12 +2,13 @@
 #define SCP_SCREENSHOT
 
 #include <cstdint>
+
 namespace scp
 {
-    class Screenshot
+    class Image
     {
         public:
-            struct Image
+            struct Info
             {
                 int width;
                 int height;
@@ -18,7 +19,7 @@ namespace scp
                 unsigned long greenMask;
                 unsigned long blueMask;
 
-                std::uint8_t *pixels;
+                uint8_t *pixels;
             };
     };
 } // namespace scp
