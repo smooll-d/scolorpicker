@@ -2,6 +2,9 @@
 #include "Utils/Utils.hpp"
 #include "version.hpp"
 
+#include "SDL3/SDL_version.h"
+#include "SDL3_ttf/SDL_ttf.h"
+
 #include <algorithm>
 #include <cstdlib>
 #include <format>
@@ -87,11 +90,11 @@ namespace scp
 Options:
     --help,    -h          Show this message and exit
     --version, -v          Show version + other info and exit
-    --format,  -f <Format> Choose how selected color is formatted
-    --output,  -o <Output> Choose where color is sent to
+    --format,  -f <Format> How color value is formatted
+    --output,  -o <Output> Where formatted color value is sent to
 
 Format:
-    hex                    Hexadecimal (e.g. {})                  [DEFAULT]
+    hex                    Hexadecimal (e.g. {})                   [DEFAULT]
     lhex                   Hexadecimal in lowercase (e.g. {})
     rgb                    RGB (e.g. {})
 
@@ -105,9 +108,10 @@ Output:
     {
         std::string heart = Utils::TRed("<3", "foreground");
 
-        std::cout << std::format(R"(scolorpicker v{}.{}.{}
-Made with {} by Jakub Skowron (@smooll-d))", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH, heart)
-                  << '\n';
+        std::cout << std::format("scolorpicker v{}.{}.{}", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH) << '\n';
+        std::cout << std::format("Made with {} by Jakub Skowron (@smooll-d)", heart) << "\n\n";
+        std::cout << std::format("SDL v{}", SDL_VERSION) << '\n';
+        std::cout << std::format("SDL_ttf v{}", TTF_Version()) << '\n';
     }
 
     bool CLI::_FindArgument(std::string option, std::string argument)
