@@ -10,7 +10,10 @@ namespace scp
     namespace Utils
     {
         std::string TRed(std::string_view str, std::string_view ground = "background");
+
         void TestSDL(SDL_Renderer *renderer);
+
+        unsigned int CountTrailingZeroes(int number);
     } // namespace Utils
 } // namespace scp
 
