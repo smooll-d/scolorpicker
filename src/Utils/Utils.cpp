@@ -30,5 +30,22 @@ namespace scp
 
             SDL_SetRenderDrawColorFloat(renderer, red, green, blue, SDL_ALPHA_OPAQUE_FLOAT);
         }
+
+        // Returns index of the first bit different than 0 in a byte sequence, counting from the least significant bit.
+        unsigned int CountTrailingZeroes(int number)
+        {
+            unsigned int bits = 0;
+
+            if (number)
+            {
+                while ((number & 1) == 0)
+                {
+                    bits++;
+                    number >>= 1;
+                }
+            }
+
+            return bits;
+        }
     } // namespace Utils
 } // namespace scp
