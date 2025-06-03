@@ -16,10 +16,10 @@ namespace scp
        _ParameterIterator{},
        _ParameterDistance{0}
     {
-        for (const auto &parameter : _Parameters)
+        for (const auto &parameter : this->_Parameters)
         {
             if (parameter.starts_with("--") || parameter.starts_with("-"))
-            { _HandleParameters(parameter); }
+            { this->_HandleParameters(parameter); }
         }
     }
 
@@ -27,24 +27,24 @@ namespace scp
     {
         if (parameter == "--help" || parameter == "-h")
         {
-            _ShowHelp();
+            this->_ShowHelp();
 
             std::exit(0);
         }
         else if (parameter == "--version" || parameter == "-v")
         {
-            _ShowVersion();
+            this->_ShowVersion();
 
             std::exit(0);
         }
         else if (parameter == "--format" || parameter == "-f")
         {
-            if (_FindArgument(parameter, "hex"))
-            { _Info.format = "hex"; }
-            else if (_FindArgument(parameter, "lhex"))
-            { _Info.format = "lhex"; }
-            else if (_FindArgument(parameter, "rgb"))
-            { _Info.format = "rgb"; }
+            if (this->_FindArgument(parameter, "hex"))
+            { this->_Info.format = "hex"; }
+            else if (this->_FindArgument(parameter, "lhex"))
+            { this->_Info.format = "lhex"; }
+            else if (this->_FindArgument(parameter, "rgb"))
+            { this->_Info.format = "rgb"; }
             else
             {
                 std::cout << "Unknown format!\n";
@@ -55,10 +55,10 @@ namespace scp
         }
         else if (parameter == "--output" || parameter == "-o")
         {
-            if (_FindArgument(parameter, "terminal"))
-            { _Info.output = "terminal"; }
-            else if (_FindArgument(parameter, "clipboard"))
-            { _Info.output = "clipboard"; }
+            if (this->_FindArgument(parameter, "terminal"))
+            { this->_Info.output = "terminal"; }
+            else if (this->_FindArgument(parameter, "clipboard"))
+            { this->_Info.output = "clipboard"; }
             else
             {
                 std::cout << "Unknown output!\n";
@@ -112,9 +112,9 @@ Made with {} by Jakub Skowron (@smooll-d))", SCP_VERSION_MAJOR, SCP_VERSION_MINO
 
     bool CLI::_FindArgument(std::string option, std::string argument)
     {
-        _ParameterIterator = std::find(_Parameters.begin(), _Parameters.end(), option);
-        _ParameterDistance = std::distance(_Parameters.begin(), _ParameterIterator);
+        this->_ParameterIterator = std::find(this->_Parameters.begin(), this->_Parameters.end(), option);
+        this->_ParameterDistance = std::distance(this->_Parameters.begin(), this->_ParameterIterator);
 
-        return _Parameters.at(_ParameterDistance + 1) == argument;
+        return this->_Parameters.at(this->_ParameterDistance + 1) == argument;
     }
 } // namespace scp
