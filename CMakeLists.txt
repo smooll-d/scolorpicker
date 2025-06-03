@@ -6,7 +6,6 @@ project(scolorpicker
     LANGUAGES CXX
 )
 
-set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -24,4 +23,4 @@ add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src")
 
-target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf X11)
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_ttf::SDL3_ttf X11)
