@@ -51,6 +51,7 @@ namespace scp
         this->SetGreenMask(screenshot->green_mask);
         this->SetBlueMask(screenshot->blue_mask);
         this->SetPixels(reinterpret_cast<uint8_t*>(screenshot->data));
+        this->SetSize(screenshot->width * screenshot->height * (screenshot->bits_per_pixel / 8));
         this->ConvertPixelFormat();
 
         // NOTE: For some reason XDestroyImage() doesn't exist, so instead of using that, we'll just manually expand the macro

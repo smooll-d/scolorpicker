@@ -59,7 +59,7 @@ namespace scp
     {
         int bytesPerPixel = this->_Info.bitsPerPixel / 8;
 
-        uint8_t *convertedPixels = new uint8_t[this->_Info.width * this->_Info.height * bytesPerPixel];
+        uint8_t *convertedPixels = new uint8_t[this->_Info.size];
 
         for (int x = 0; x < this->_Info.width; x++)
         {
