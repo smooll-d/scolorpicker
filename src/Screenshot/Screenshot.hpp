@@ -3,6 +3,7 @@
 
 #include "SDL3/SDL_render.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 
@@ -23,6 +24,8 @@ namespace scp
                 unsigned long blueMask;
 
                 uint8_t *pixels;
+
+                std::size_t size;
             };
 
             static std::unique_ptr<Screenshot> CreateInstance();
@@ -44,6 +47,8 @@ namespace scp
 
             uint8_t *GetPixels() { return this->_Info.pixels; }
 
+            std::size_t GetSize() { return this->_Info.size; }
+
             void SetWidth(int width) { this->_Info.width = width; }
             void SetHeight(int height) { this->_Info.height = height; }
             void SetPitch(int pitch) { this->_Info.pitch = pitch; }
@@ -52,6 +57,7 @@ namespace scp
             void SetGreenMask(unsigned long greenMask) { this->_Info.greenMask = greenMask; }
             void SetBlueMask(unsigned long blueMask) { this->_Info.blueMask = blueMask; }
             void SetPixels(uint8_t *pixels) { this->_Info.pixels = pixels; }
+            void SetSize(std::size_t size) { this->_Info.size = size; }
         private:
             void _Destroy();
 
