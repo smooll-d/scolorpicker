@@ -54,6 +54,4 @@ dkms.conf
 # Repo
 build/
 .cache/
-.clangd
-launch_weston.sh
-launch_colorpicker.sh
+scripts/

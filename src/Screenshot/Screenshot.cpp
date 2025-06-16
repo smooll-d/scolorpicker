@@ -1,5 +1,5 @@
 #include "Screenshot.hpp"
-#include "Implementations/X11/Screenshot_X11.hpp"
+#include "config.hpp"
 #include "Utils/Utils.hpp"
 
 #include "SDL3/SDL_error.h"
@@ -13,15 +13,34 @@
 #include <iostream>
 #include <memory>
 
+#ifdef SCP_ENABLE_X11
+#include "Implementations/X11/Screenshot_X11.hpp"
+#elif defined SCP_ENABLE_WAYLAND
+#include "Implementations/Wayland/Screenshot_Wayland.hpp"
+#elif defined SCP_ENABLE_LINUX
+#include "Implementations/X11/Screenshot_X11.hpp"
+#include "Implementations/Wayland/Screenshot_Wayland.hpp"
+#endif // SCP_ENABLE_X11
+
 namespace scp
 {
     // Create an instance of Screenshot based on the platform.
     std::unique_ptr<Screenshot> Screenshot::CreateInstance()
     {
+#ifdef SCP_ENABLE_X11
+        return std::make_unique<Screenshot_X11>();
+#elif defined SCP_ENABLE_WAYLAND
+        return std::make_unique<Screenshot_Wayland>();
+#elif defined SCP_ENABLE_LINUX
         if (std::getenv("DISPLAY"))
         {
             return std::make_unique<Screenshot_X11>();
         }
+        else if (std::getenv("WAYLAND_DISPLAY"))
+        {
+            return std::make_unique<Screenshot_Wayland>();
+        }
+#endif
 
         std::cerr << "Failed to determine platform!\n";
 

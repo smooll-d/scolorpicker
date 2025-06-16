@@ -21,8 +21,8 @@ FetchContent_Declare(
     SDL3
     GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
     GIT_TAG        release-3.2.14
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+    GIT_SHALLOW    ON
+    GIT_PROGRESS   ON
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(SDL3)
@@ -42,8 +42,8 @@ FetchContent_Declare(
     SDL_image
     GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
     GIT_TAG        release-3.2.4
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+    GIT_SHALLOW    ON
+    GIT_PROGRESS   ON
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(SDL_image)
@@ -52,8 +52,8 @@ FetchContent_Declare(
     SDL_ttf
     GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
     GIT_TAG        release-3.2.2
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+    GIT_SHALLOW    ON
+    GIT_PROGRESS   ON
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(SDL_ttf)
