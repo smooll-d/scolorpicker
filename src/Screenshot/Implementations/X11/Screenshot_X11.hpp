@@ -12,4 +12,4 @@ namespace scp
     };
 } // namespace scp
 
-#endif
+#endif // SCP_SCREENSHOT_X11

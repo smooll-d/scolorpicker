@@ -1,6 +1,6 @@
 #include "CLI/CLI.hpp"
 #include "Screenshot/Screenshot.hpp"
-#include "version.hpp"
+#include "config.hpp"
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>

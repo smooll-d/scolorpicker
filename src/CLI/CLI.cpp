@@ -1,6 +1,6 @@
 #include "CLI.hpp"
 #include "Utils/Utils.hpp"
-#include "version.hpp"
+#include "config.hpp"
 
 #include "SDL3/SDL_version.h"
 #include "SDL3_ttf/SDL_ttf.h"

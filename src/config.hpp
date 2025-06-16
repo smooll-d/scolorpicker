@@ -6,4 +6,8 @@
 #define SCP_VERSION_PATCH "0"
 #define SCP_VERSION_TWEAK ""
 
+#define SCP_ENABLE_X11
+/* #undef SCP_ENABLE_WAYLAND */
+/* #undef SCP_ENABLE_LINUX */
+
 #endif // SCP_VERSION
