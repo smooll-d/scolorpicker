@@ -2,8 +2,14 @@
 #define SCP_SCREENSHOT_X11
 
 #include "Screenshot/Screenshot.hpp"
+#include "config.hpp"
 
 #include <SDL3/SDL_render.h>
+
+#ifdef SCP_ENABLE_XCB
+#include <xcb/xcb.h>
+#include <xcb/xproto.h>
+#endif // SCP_ENABLE_XCB
 
 namespace scp
 {
@@ -13,6 +19,12 @@ namespace scp
             void Take() override;
 
             SDL_Texture *CreateTexture(SDL_Renderer *renderer) override;
+#ifdef SCP_ENABLE_XCB
+        private:
+            xcb_screen_t *GetScreen(xcb_connection_t *connection, int screen);
+
+            xcb_visualtype_t *GetVisualType(xcb_connection_t *connection, xcb_screen_t *screen);
+#endif // SCP_ENABLE_XCB
     };
 } // namespace scp
 

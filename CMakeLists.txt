@@ -7,6 +7,8 @@ project(scolorpicker
 )
 
 option(SCP_ENABLE_X11 "Enable X11 backend support" OFF)
+option(SCP_ENABLE_XLIB "Enable Xlib backend support" OFF)
+option(SCP_ENABLE_XCB "Enable xcb backend support" OFF)
 option(SCP_ENABLE_WAYLAND "Enable Wayland backend support" OFF)
 option(SCP_ENABLE_LINUX "Enable X11 and Wayland backend support" OFF)
 option(SCP_ENABLE_AUTO "Enable automatically detected backend" ON)
@@ -25,6 +27,8 @@ configure_file("${CMAKE_SOURCE_DIR}/cmake/config.hpp.in" "${CMAKE_SOURCE_DIR}/sr
 
 message(STATUS "Options:")
 message(STATUS "    SCP_ENABLE_X11     ${SCP_ENABLE_X11}")
+message(STATUS "    SCP_ENABLE_XLIB    ${SCP_ENABLE_XLIB}")
+message(STATUS "    SCP_ENABLE_XCB     ${SCP_ENABLE_XCB}")
 message(STATUS "    SCP_ENABLE_WAYLAND ${SCP_ENABLE_WAYLAND}")
 message(STATUS "    SCP_ENABLE_LINUX   ${SCP_ENABLE_LINUX}")
 message(STATUS "    SCP_ENABLE_AUTO    ${SCP_ENABLE_AUTO}")
@@ -53,8 +57,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/sr
 target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
 
 if(SCP_ENABLE_X11)
-    target_link_libraries(${CMAKE_PROJECT_NAME} X11)
+    target_link_libraries(${CMAKE_PROJECT_NAME} xcb xcb-image)
 elseif(SCP_ENABLE_WAYLAND)
 elseif(SCP_ENABLE_LINUX)
-    target_link_libraries(${CMAKE_PROJECT_NAME} X11)
+    target_link_libraries(${CMAKE_PROJECT_NAME} xcb xcb-image)
 endif()

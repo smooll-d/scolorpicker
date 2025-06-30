@@ -7,6 +7,8 @@
 #define SCP_VERSION_TWEAK "@scolorpicker_VERSION_TWEAK@"
 
 #cmakedefine SCP_ENABLE_X11
+#cmakedefine SCP_ENABLE_XLIB
+#cmakedefine SCP_ENABLE_XCB
 #cmakedefine SCP_ENABLE_WAYLAND
 #cmakedefine SCP_ENABLE_LINUX
 
