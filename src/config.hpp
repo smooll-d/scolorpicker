@@ -7,6 +7,8 @@
 #define SCP_VERSION_TWEAK ""
 
 #define SCP_ENABLE_X11
+/* #undef SCP_ENABLE_XLIB */
+#define SCP_ENABLE_XCB
 /* #undef SCP_ENABLE_WAYLAND */
 /* #undef SCP_ENABLE_LINUX */
 
