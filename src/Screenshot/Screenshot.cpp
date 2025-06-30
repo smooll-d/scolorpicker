@@ -47,32 +47,6 @@ namespace scp
         return nullptr;
     }
 
-    // Creates surface from image data creating a texture from said surface after for rendering.
-    SDL_Texture *Screenshot::CreateTexture(SDL_Renderer *renderer)
-    {
-        SDL_Surface *surface = SDL_CreateSurfaceFrom(this->_Info.width, this->_Info.height, SDL_PIXELFORMAT_RGBA32, this->_Info.pixels, this->_Info.pitch);
-        if (!surface)
-        {
-            SDL_Log("Failed to create surface from screenshot: %s", SDL_GetError());
-
-            SDL_Quit();
-        }
-
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-        if (!texture)
-        {
-            SDL_Log("Failed to create texture from surface: %s", SDL_GetError());
-
-            SDL_Quit();
-        }
-
-        SDL_DestroySurface(surface);
-
-        this->_Destroy();
-
-        return texture;
-    } 
-
     // Converts an image's pixel data from it's format to RGBA.
     void Screenshot::ConvertPixelFormat()
     {

@@ -32,7 +32,7 @@ namespace scp
 
             virtual void Take() = 0;
 
-            SDL_Texture *CreateTexture(SDL_Renderer *renderer);
+            virtual SDL_Texture *CreateTexture(SDL_Renderer *renderer) = 0;
 
             void ConvertPixelFormat();
 
@@ -58,7 +58,7 @@ namespace scp
             void SetBlueMask(unsigned long blueMask) { this->_Info.blueMask = blueMask; }
             void SetPixels(uint8_t *pixels) { this->_Info.pixels = pixels; }
             void SetSize(std::size_t size) { this->_Info.size = size; }
-        private:
+        protected:
             void _Destroy();
 
             Info _Info;

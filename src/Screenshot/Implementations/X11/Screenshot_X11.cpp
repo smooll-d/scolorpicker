@@ -3,6 +3,10 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_render.h>
+
 #include <cstdlib>
 #include <iostream>
 
@@ -58,5 +62,30 @@ namespace scp
         screenshot->f.destroy_image(screenshot);
 
         XCloseDisplay(display);
+    }
+
+    SDL_Texture *Screenshot_X11::CreateTexture(SDL_Renderer *renderer)
+    {
+        SDL_Surface *surface = SDL_CreateSurfaceFrom(this->_Info.width, this->_Info.height, SDL_PIXELFORMAT_RGBA32, this->_Info.pixels, this->_Info.pitch);
+        if (!surface)
+        {
+            SDL_Log("Failed to create surface from screenshot: %s", SDL_GetError());
+
+            SDL_Quit();
+        }
+
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+        if (!texture)
+        {
+            SDL_Log("Failed to create texture from surface: %s", SDL_GetError());
+
+            SDL_Quit();
+        }
+
+        SDL_DestroySurface(surface);
+
+        this->_Destroy();
+
+        return texture;
     }
 } // namespace scp
