@@ -47,6 +47,8 @@ endfunction()
 function(scp_enable_wayland)
     message(STATUS "Wayland backend support enabled")
 
+    include(cmake/setup_sdbus.cmake)
+
     set(SCP_ENABLE_X11 OFF CACHE INTERNAL "SCP_ENABLE_X11")
     set(SCP_ENABLE_XLIB OFF CACHE INTERNAL "SCP_ENABLE_XLIB")
     set(SCP_ENABLE_XCB OFF CACHE INTERNAL "SCP_ENABLE_XCB")
@@ -55,7 +57,8 @@ function(scp_enable_wayland)
     set(SCP_ENABLE_AUTO OFF CACHE INTERNAL "SCP_ENABLE_AUTO")
 
     #TODO: Add Wayland libraries
-    list(APPEND _scp_sys_wayland )
+    list(APPEND _scp_sys_wayland sdbus-c++)
+    set(_SCP_SDBUSCPP_INCLUDE_DIRECTORY "${sdbus-c++_SOURCE_DIR}/include" CACHE INTERNAL "_SCP_SDBUSCPP_INCLUDE_DIRECTORY")
     set(_SCP_SYSTEM_LIBRARIES_WAYLAND ${_scp_sys_wayland} CACHE INTERNAL "_SCP_SYSTEM_LIBRARIES_WAYLAND")
 
     set(screenshot_src

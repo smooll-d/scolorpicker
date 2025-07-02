@@ -15,8 +15,6 @@ set(SDLIMAGE_SAMPLES OFF)
 # SDL_ttf flags
 set(SDLTTF_SAMPLES OFF)
 
-include(FetchContent)
-
 FetchContent_Declare(
     SDL3
     GIT_REPOSITORY https://github.com/libsdl-org/SDL.git

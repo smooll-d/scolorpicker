@@ -1,5 +1,8 @@
 #include "Screenshot_Wayland.hpp"
+
 #include "SDL3/SDL_render.h"
+
+#include <sdbus-c++/IConnection.h>
 
 namespace scp
 {
