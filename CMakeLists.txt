@@ -35,16 +35,6 @@ message(STATUS "    SCP_ENABLE_AUTO    ${SCP_ENABLE_AUTO}")
 
 file(GLOB_RECURSE cli_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/CLI/*.cpp")
 file(GLOB_RECURSE utils_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utils/*.cpp")
-set(screenshot_src "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp")
-
-if(SCP_ENABLE_X11)
-    list(APPEND screenshot_src "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/X11/Screenshot_X11.cpp")
-elseif(SCP_ENABLE_WAYLAND)
-    list(APPEND screenshot_src "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/Wayland/Screenshot_Wayland.cpp")
-elseif(SCP_ENABLE_LINUX)
-    list(APPEND screenshot_src "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/X11/Screenshot_X11.cpp")
-    list(APPEND screenshot_src "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/Wayland/Screenshot_Wayland.cpp")
-endif()
 
 set(exe_src "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
@@ -54,11 +44,4 @@ add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src")
 
-target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
-
-if(SCP_ENABLE_X11)
-    target_link_libraries(${CMAKE_PROJECT_NAME} xcb xcb-image)
-elseif(SCP_ENABLE_WAYLAND)
-elseif(SCP_ENABLE_LINUX)
-    target_link_libraries(${CMAKE_PROJECT_NAME} xcb xcb-image)
-endif()
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf ${SCP_SYSTEM_LIBRARIES})
