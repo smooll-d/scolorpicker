@@ -32,11 +32,13 @@ namespace scp
 #elif defined SCP_ENABLE_WAYLAND
         return std::make_unique<Screenshot_Wayland>();
 #elif defined SCP_ENABLE_LINUX
-        if (std::getenv("DISPLAY"))
+        std::string sessionType = std::getenv("XDG_SESSION_TYPE");
+
+        if (std::getenv("DISPLAY") && sessionType.compare("x11") == 0)
         {
             return std::make_unique<Screenshot_X11>();
         }
-        else if (std::getenv("WAYLAND_DISPLAY"))
+        else if (std::getenv("WAYLAND_DISPLAY") && sessionType.compare("wayland") == 0)
         {
             return std::make_unique<Screenshot_Wayland>();
         }
