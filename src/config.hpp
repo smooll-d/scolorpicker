@@ -8,8 +8,8 @@
 
 /* #undef SCP_ENABLE_X11 */
 /* #undef SCP_ENABLE_XLIB */
-/* #undef SCP_ENABLE_XCB */
-#define SCP_ENABLE_WAYLAND
-/* #undef SCP_ENABLE_LINUX */
+#define SCP_ENABLE_XCB
+/* #undef SCP_ENABLE_WAYLAND */
+#define SCP_ENABLE_LINUX
 
 #endif // SCP_VERSION
