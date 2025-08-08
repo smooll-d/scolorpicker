@@ -2,11 +2,11 @@
 
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
+
 #include <sdbus-c++/sdbus-c++.h>
 
 #include <string>
 #include <unistd.h>
-#include <utility>
 #include <cstdint>
 #include <iostream>
 
@@ -14,13 +14,17 @@ namespace scp
 {
     void Screenshot_Wayland::Take()
     {
-        sdbus::ServiceName screenshotName{"org.freedesktop.portal.Desktop"};
-        sdbus::ServiceName requestName{"org.freedesktop.portal.Request"};
+        sdbus::ServiceName desktopService{"org.freedesktop.portal.Desktop"};
+        sdbus::ServiceName RequestService{"org.freedesktop.portal.Request"};
 
-        sdbus::ObjectPath screenshotPath{"/org/freedesktop/portal/desktop"};
+        sdbus::ObjectPath desktopObject{"/org/freedesktop/portal/desktop"};
 
         sdbus::InterfaceName screenshotInterface{"org.freedesktop.portal.Screenshot"};
         sdbus::InterfaceName requestInterface{"org.freedesktop.portal.Request"};
+
+        sdbus::SignalName responseSignal{"Response"};
+
+        sdbus::MethodName screenshotMethod{"Screenshot"};
 
         std::string token{"scolorpicker_scp_screenshot"};
 
@@ -29,17 +33,17 @@ namespace scp
             _Connection = sdbus::createBusConnection();
             auto connectionName = _Connection->getUniqueName().erase(0, 1).replace(1, 1, "_");
 
-            sdbus::ObjectPath screenshotRequestPath{std::format("/org/freedesktop/portal/desktop/request/{}/{}", connectionName, token)};
+            sdbus::ObjectPath requestObject{std::format("/org/freedesktop/portal/desktop/request/{}/{}", connectionName, token)};
 
-            auto requestProxy = sdbus::createProxy(*_Connection, screenshotName, std::move(screenshotRequestPath));
-            requestProxy->uponSignal("Response")
+            auto requestProxy = sdbus::createProxy(*_Connection, desktopService, requestObject);
+            requestProxy->uponSignal(responseSignal)
                         .onInterface(requestInterface)
                         .call([this](uint32_t response, std::map<std::string, sdbus::Variant> results)
                                 { this->_OnScreenshot(response, results); }
                         );
 
-            auto screenshotProxy = sdbus::createProxy(*_Connection, screenshotName, std::move(screenshotPath));
-            screenshotProxy->callMethod("Screenshot")
+            auto screenshotProxy = sdbus::createProxy(*_Connection, desktopService, desktopObject);
+            screenshotProxy->callMethod(screenshotMethod)
                             .onInterface(screenshotInterface)
                             .withArguments("dev.smooll.scolorpicker", std::map<std::string, sdbus::Variant>{
                                                                                       { "handle_token", sdbus::Variant(token) },

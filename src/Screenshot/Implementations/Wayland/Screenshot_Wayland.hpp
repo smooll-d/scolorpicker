@@ -2,8 +2,6 @@
 #define SCP_SCREENSHOT_WAYLAND
 
 #include "Screenshot/Screenshot.hpp"
-#include "sdbus-c++/IProxy.h"
-#include "sdbus-c++/Message.h"
 
 #include <SDL3/SDL_render.h>
 #include <sdbus-c++/sdbus-c++.h>
