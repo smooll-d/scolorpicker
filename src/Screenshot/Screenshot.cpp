@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <sys/types.h>
 
 #ifdef SCP_ENABLE_X11
 #include "Implementations/X11/Screenshot_X11.hpp"
@@ -56,13 +57,19 @@ namespace scp
 
         uint8_t *convertedPixels = new uint8_t[this->_Info.size];
 
+        std::size_t offset;
+        uint32_t pixel;
+        uint8_t red;
+        uint8_t green;
+        uint8_t blue;
+
         for (int x = 0; x < this->_Info.width; x++)
         {
             for (int y = 0; y < this->_Info.height; y++)
             {
-                std::size_t offset = y * this->_Info.pitch + x * bytesPerPixel;
+                offset = y * this->_Info.pitch + x * bytesPerPixel;
 
-                uint32_t pixel = 0;
+                pixel = 0;
 
                 /* NOTE: After a little bit of research, I've found that Wayland pixel formats are, by default, little endian,
                  * which means that we don't need to detect endianess there. On X11 pixel format endianess is dependent on the host
@@ -77,9 +84,9 @@ namespace scp
                     pixel |= static_cast<uint32_t>(this->_Info.pixels[offset + i]) << (i * 8);
                 }
 
-                uint8_t red = (pixel & this->_Info.redMask) >> scp::Utils::CountTrailingZeroes(this->_Info.redMask);
-                uint8_t green = (pixel & this->_Info.greenMask) >> scp::Utils::CountTrailingZeroes(this->_Info.greenMask);
-                uint8_t blue = (pixel & this->_Info.blueMask) >> scp::Utils::CountTrailingZeroes(this->_Info.blueMask);
+                red = (pixel & this->_Info.redMask) >> scp::Utils::CountTrailingZeroes(this->_Info.redMask);
+                green = (pixel & this->_Info.greenMask) >> scp::Utils::CountTrailingZeroes(this->_Info.greenMask);
+                blue = (pixel & this->_Info.blueMask) >> scp::Utils::CountTrailingZeroes(this->_Info.blueMask);
 
                 convertedPixels[offset] = red;
                 convertedPixels[offset + 1] = green;
