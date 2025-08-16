@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.11)
 
 project(scolorpicker
     VERSION 2.0.0
@@ -8,10 +8,12 @@ project(scolorpicker
 
 option(SCP_ENABLE_X11 "Enable X11 backend support" OFF)
 option(SCP_ENABLE_XLIB "Enable Xlib backend support" OFF)
-option(SCP_ENABLE_XCB "Enable xcb backend support" OFF)
+option(SCP_ENABLE_XCB "Enable XCB backend support" OFF)
 option(SCP_ENABLE_WAYLAND "Enable Wayland backend support" OFF)
 option(SCP_ENABLE_LINUX "Enable X11 and Wayland backend support" OFF)
 option(SCP_ENABLE_AUTO "Enable automatically detected backend" ON)
+option(SCP_FORCE_XLIB "Force Xlib backend. Used with SCP_ENABLE_LINUX" OFF)
+option(SCP_FORCE_XCB "Force XCB backend. Used with SCP_ENABLE_LINUX" OFF)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 set(CMAKE_CXX_STANDARD 20)
@@ -19,6 +21,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+set(FETCHCONTENT_QUIET OFF)
 
 include(FetchContent)
 # TODO: Let user choose between Xlib or XCB when option SCP_ENABLE_LINUX is used
@@ -46,7 +49,8 @@ list(APPEND exe_src ${cli_src} ${utils_src} ${screenshot_src})
 
 add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 
+target_compile_options(${CMAKE_PROJECT_NAME} BEFORE PUBLIC -Wall)
+
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src" ${_SCP_SDBUSCPP_INCLUDE_DIRECTORY})
 
-# TODO: If user has all libraries installed on system, use them instead of downloading and compiling. It'll save tons of time.
-target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf ${SCP_SYSTEM_LIBRARIES})
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
