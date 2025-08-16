@@ -21,67 +21,6 @@
 namespace scp
 {
 
-#ifdef SCP_ENABLE_XCB
-    // Populate Info struct with image data using xcb.
-    void Screenshot_X11::Take()
-    {
-        int defaultRootWindow;
-
-        xcb_window_t rootWindow = { 0 };
-
-        xcb_connection_t *connection = xcb_connect(nullptr, &defaultRootWindow);
-        if (!connection)
-        {
-            std::cerr << "Failed to open connection to X server!\n";
-
-            std::exit(1);
-        }
-
-        xcb_screen_t *screen = GetScreen(connection, defaultRootWindow);
-        if (!screen)
-        {
-            std::cerr << "Failed to get root window!\n";
-
-            std::exit(1);
-        }
-
-        xcb_visualtype_t *visualType = GetVisualType(connection, screen);
-        if (!visualType)
-        {
-            std::cerr << "Failed to get the visual type of root!\n";
-
-            std::exit(1);
-        }
-
-        /* NOTE: In Xlib, the plane_mask is usually set to AllPlanes. Internally that's just ~0UL, to get everything, all bits set.
-         * xcb unfortunately doesn't have such a thing, it's really low level, but since in Xlib it's just ~0UL, we can set it here
-         * as well. We do have to use ~0 static_cast to uint32_t instead of ~0UL as plane_mask is a unsigned 32 bit integer not an unsigned long. We could use ~0U, but I'd rather be safe than sorry.
-         */
-        xcb_image_t *screenshot = xcb_image_get(connection, screen->root, 0, 0, screen->width_in_pixels, screen->height_in_pixels, static_cast<uint32_t>(~0), XCB_IMAGE_FORMAT_Z_PIXMAP);
-        if (!screenshot)
-        {
-            std::cerr << "Failed to take a screenshot!\n";
-
-            std::exit(1);
-        }
-
-        this->SetWidth(screenshot->width);
-        this->SetHeight(screenshot->height);
-        this->SetPitch(screenshot->stride);
-        this->SetBitsPerPixel(screenshot->bpp);
-        this->SetRedMask(visualType->red_mask);
-        this->SetGreenMask(visualType->green_mask);
-        this->SetBlueMask(visualType->blue_mask);
-        this->SetPixels(reinterpret_cast<uint8_t*>(screenshot->data));
-        this->SetSize(screenshot->size);
-        this->ConvertPixelFormat();
-
-        xcb_image_destroy(screenshot);
-
-        xcb_disconnect(connection);
-    }
-#endif // SCP_ENABLE_XCB
-
 #ifdef SCP_ENABLE_XLIB
     // Populate Info struct with data using Xlib's XGetImage() function.
     void Screenshot_X11::Take()
@@ -135,6 +74,65 @@ namespace scp
         XCloseDisplay(display);
     }
 #endif // SCP_ENABLE_XLIB
+
+#ifdef SCP_ENABLE_XCB
+    // Populate Info struct with image data using xcb.
+    void Screenshot_X11::Take()
+    {
+        int defaultRootWindow;
+
+        xcb_connection_t *connection = xcb_connect(nullptr, &defaultRootWindow);
+        if (!connection)
+        {
+            std::cerr << "Failed to open connection to X server!\n";
+
+            std::exit(1);
+        }
+
+        xcb_screen_t *screen = GetScreen(connection, defaultRootWindow);
+        if (!screen)
+        {
+            std::cerr << "Failed to get root window!\n";
+
+            std::exit(1);
+        }
+
+        xcb_visualtype_t *visualType = GetVisualType(connection, screen);
+        if (!visualType)
+        {
+            std::cerr << "Failed to get the visual type of root!\n";
+
+            std::exit(1);
+        }
+
+        /* NOTE: In Xlib, the plane_mask is usually set to AllPlanes. Internally that's just ~0UL, to get everything, all bits set.
+         * xcb unfortunately doesn't have such a thing, it's really low level, but since in Xlib it's just ~0UL, we can set it here
+         * as well. We do have to use ~0 static_cast to uint32_t instead of ~0UL as plane_mask is an unsigned 32 bit integer not an unsigned long. We could use ~0U, but I'd rather be safe than sorry.
+         */
+        xcb_image_t *screenshot = xcb_image_get(connection, screen->root, 0, 0, screen->width_in_pixels, screen->height_in_pixels, static_cast<uint32_t>(~0), XCB_IMAGE_FORMAT_Z_PIXMAP);
+        if (!screenshot)
+        {
+            std::cerr << "Failed to take a screenshot!\n";
+
+            std::exit(1);
+        }
+
+        this->SetWidth(screenshot->width);
+        this->SetHeight(screenshot->height);
+        this->SetPitch(screenshot->stride);
+        this->SetBitsPerPixel(screenshot->bpp);
+        this->SetRedMask(visualType->red_mask);
+        this->SetGreenMask(visualType->green_mask);
+        this->SetBlueMask(visualType->blue_mask);
+        this->SetPixels(reinterpret_cast<uint8_t*>(screenshot->data));
+        this->SetSize(screenshot->size);
+        this->ConvertPixelFormat();
+
+        xcb_image_destroy(screenshot);
+
+        xcb_disconnect(connection);
+    }
+#endif // SCP_ENABLE_XCB
 
     SDL_Texture *Screenshot_X11::CreateTexture(SDL_Renderer *renderer)
     {
