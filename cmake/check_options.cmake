@@ -1,7 +1,11 @@
 include(CheckLibraryExists)
 
 function(scp_enable_xlib)
-    message(STATUS "Xlib backend support enabled")
+    if(SCP_ENABLE_XLIB)
+        message(STATUS "Xlib backend support enabled")
+    elseif(SCP_FORCE_XLIB)
+        message(STATUS "Xlib backend support forced")
+    endif()
 
     set(SCP_ENABLE_X11 ON CACHE INTERNAL "SCP_ENABLE_X11")
     set(SCP_ENABLE_XLIB ON CACHE INTERNAL "SCP_ENABLE_XLIB")
@@ -16,14 +20,19 @@ function(scp_enable_xlib)
     set(screenshot_src
         "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp"
         "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/X11/Screenshot_X11.cpp"
-        CACHE INTERNAL "screenshot_src")
+        CACHE INTERNAL "screenshot_src"
+    )
 
     set(SDL_X11 ON CACHE INTERNAL "SDL_X11")
     set(SDL_WAYLAND OFF CACHE INTERNAL "SDL_WAYLAND")
 endfunction()
 
 function(scp_enable_xcb)
-    message(STATUS "xcb backend support enabled")
+    if(SCP_ENABLE_XCB)
+        message(STATUS "XCB backend support enabled")
+    elseif(SCP_FORCE_XCB)
+        message(STATUS "XCB backend support forced")
+    endif()
 
     set(SCP_ENABLE_X11 ON CACHE INTERNAL "SCP_ENABLE_X11")
     set(SCP_ENABLE_XLIB OFF CACHE INTERNAL "SCP_ENABLE_XLIB")
@@ -56,15 +65,14 @@ function(scp_enable_wayland)
     set(SCP_ENABLE_LINUX OFF CACHE INTERNAL "SCP_ENABLE_LINUX")
     set(SCP_ENABLE_AUTO OFF CACHE INTERNAL "SCP_ENABLE_AUTO")
 
-    #TODO: Add Wayland libraries
-    list(APPEND _scp_sys_wayland sdbus-c++)
+    set(SCP_SDBUSCPP sdbus-c++ CACHE INTERNAL "SCP_SDBUSCPP")
     set(_SCP_SDBUSCPP_INCLUDE_DIRECTORY "${sdbus-c++_SOURCE_DIR}/include" CACHE INTERNAL "_SCP_SDBUSCPP_INCLUDE_DIRECTORY")
-    set(_SCP_SYSTEM_LIBRARIES_WAYLAND ${_scp_sys_wayland} CACHE INTERNAL "_SCP_SYSTEM_LIBRARIES_WAYLAND")
 
     set(screenshot_src
         "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp"
         "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/Wayland/Screenshot_Wayland.cpp"
-        CACHE INTERNAL "screenshot_src")
+        CACHE INTERNAL "screenshot_src"
+    )
 
     set(SDL_X11 OFF CACHE INTERNAL "SDL_X11")
     set(SDL_WAYLAND ON CACHE INTERNAL "SDL_WAYLAND")
@@ -87,13 +95,22 @@ function(scp_enable_linux)
         "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp"
         "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/X11/Screenshot_X11.cpp"
         "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/Wayland/Screenshot_Wayland.cpp"
-        CACHE INTERNAL "screenshot_src")
+        CACHE INTERNAL "screenshot_src"
+    )
 
     set(SDL_X11 ON CACHE INTERNAL "SDL_X11")
     set(SDL_WAYLAND ON CACHE INTERNAL "SDL_WAYLAND")
 endfunction()
 
 function(scp_detect_x11)
+    if(SCP_FORCE_XLIB)
+        scp_enable_xlib()
+        return()
+    elseif(SCP_FORCE_XCB)
+        scp_enable_xcb()
+        return()
+    endif()
+
     message(STATUS "Checking for Xlib and xcb...")
 
     check_library_exists(xcb xcb_connect "" _SCP_HAS_XCB)
@@ -138,4 +155,4 @@ elseif(SCP_ENABLE_AUTO)
     endif()
 endif()
 
-set(SCP_SYSTEM_LIBRARIES ${_SCP_SYSTEM_LIBRARIES_XLIB} ${_SCP_SYSTEM_LIBRARIES_XCB} ${_SCP_SYSTEM_LIBRARIES_WAYLAND} CACHE INTERNAL "SCP_SYSTEM_LIBRARIES")
+set(SCP_SYSTEM_LIBRARIES ${_SCP_SYSTEM_LIBRARIES_XLIB} ${_SCP_SYSTEM_LIBRARIES_XCB} CACHE INTERNAL "SCP_SYSTEM_LIBRARIES")
