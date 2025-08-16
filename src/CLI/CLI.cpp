@@ -2,8 +2,8 @@
 #include "Utils/Utils.hpp"
 #include "config.hpp"
 
-#include "SDL3/SDL_version.h"
-#include "SDL3_ttf/SDL_ttf.h"
+#include <SDL3/SDL_version.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 #include <algorithm>
 #include <cstdlib>
@@ -109,9 +109,9 @@ Output:
         std::string heart = Utils::TRed("<3", "foreground");
 
         std::cout << std::format("scolorpicker v{}.{}.{}", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH) << '\n';
-        std::cout << std::format("Made with {} by Jakub Skowron (@smooll-d)", heart) << "\n\n";
         std::cout << std::format("SDL v{}", SDL_VERSION) << '\n';
-        std::cout << std::format("SDL_ttf v{}", TTF_Version()) << '\n';
+        std::cout << std::format("SDL_ttf v{}", TTF_Version()) << "\n\n";
+        std::cout << std::format("Made with {} by Jakub Skowron (@smooll-d)", heart) << '\n';
     }
 
     bool CLI::_FindArgument(std::string option, std::string argument)
