@@ -1,7 +1,7 @@
-#ifndef SCP_SCREENSHOT_X11
-#define SCP_SCREENSHOT_X11
+#ifndef SCP_SCREENSHOOTER_X11
+#define SCP_SCREENSHOOTER_X11
 
-#include "Screenshot/Screenshot.hpp"
+#include "Screenshooter/Screenshooter.hpp"
 #include "config.hpp"
 
 #include <SDL3/SDL_render.h>
@@ -13,7 +13,7 @@
 
 namespace scp
 {
-    class Screenshot_X11 : public Screenshot
+    class Screenshooter_X11 : public Screenshooter
     {
         public:
             void Take() override;
@@ -28,4 +28,4 @@ namespace scp
     };
 } // namespace scp
 
-#endif // SCP_SCREENSHOT_X11
+#endif // SCP_SCREENSHOOTER_X11

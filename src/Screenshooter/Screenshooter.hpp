@@ -1,7 +1,7 @@
-#ifndef SCP_SCREENSHOT
-#define SCP_SCREENSHOT
+#ifndef SCP_SCREENSHOOTER
+#define SCP_SCREENSHOOTER
 
-#include "SDL3/SDL_render.h"
+#include <SDL3/SDL_render.h>
 
 #include <cstddef>
 #include <cstdint>
@@ -9,7 +9,7 @@
 
 namespace scp
 {
-    class Screenshot
+    class Screenshooter
     {
         public:
             struct Info
@@ -28,7 +28,7 @@ namespace scp
                 std::size_t size;
             };
 
-            static std::unique_ptr<Screenshot> CreateInstance();
+            static std::unique_ptr<Screenshooter> CreateInstance();
 
             virtual void Take() = 0;
 
@@ -65,4 +65,4 @@ namespace scp
     };
 } // namespace scp
 
-#endif // SCP_SCREENSHOT
+#endif // SCP_SCREENSHOOTER

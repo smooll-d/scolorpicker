@@ -18,8 +18,8 @@ function(scp_enable_xlib)
     set(_SCP_SYSTEM_LIBRARIES_XLIB ${_scp_sys_xlib} CACHE INTERNAL "_SCP_SYSTEM_LIBRARIES_XLIB")
 
     set(screenshot_src
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/X11/Screenshot_X11.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Screenshooter.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Implementations/X11/Screenshooter_X11.cpp"
         CACHE INTERNAL "screenshot_src"
     )
 
@@ -45,8 +45,8 @@ function(scp_enable_xcb)
     set(_SCP_SYSTEM_LIBRARIES_XCB ${_scp_sys_xcb} CACHE INTERNAL "_SCP_SYSTEM_LIBRARIES_XCB")
 
     set(screenshot_src
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/X11/Screenshot_X11.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Screenshooter.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Implementations/X11/Screenshooter_X11.cpp"
         CACHE INTERNAL "screenshot_src")
 
     set(SDL_X11 ON CACHE INTERNAL "SDL_X11")
@@ -69,8 +69,8 @@ function(scp_enable_wayland)
     set(_SCP_SDBUSCPP_INCLUDE_DIRECTORY "${sdbus-c++_SOURCE_DIR}/include" CACHE INTERNAL "_SCP_SDBUSCPP_INCLUDE_DIRECTORY")
 
     set(screenshot_src
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/Wayland/Screenshot_Wayland.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Screenshooter.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Implementations/Wayland/Screenshooter_Wayland.cpp"
         CACHE INTERNAL "screenshot_src"
     )
 
@@ -92,9 +92,9 @@ function(scp_enable_linux)
     set(SCP_ENABLE_AUTO OFF CACHE INTERNAL "SCP_ENABLE_AUTO")
 
     set(screenshot_src
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Screenshot.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/X11/Screenshot_X11.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Screenshot/Implementations/Wayland/Screenshot_Wayland.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Screenshooter.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Implementations/X11/Screenshooter_X11.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Screenshooter/Implementations/Wayland/Screenshooter_Wayland.cpp"
         CACHE INTERNAL "screenshot_src"
     )
 
