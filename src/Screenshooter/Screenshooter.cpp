@@ -1,11 +1,6 @@
-#include "Screenshot.hpp"
+#include "Screenshooter.hpp"
 #include "config.hpp"
 #include "Utils/Utils.hpp"
-
-#include "SDL3/SDL_error.h"
-#include "SDL3/SDL_pixels.h"
-#include "SDL3/SDL_surface.h"
-#include "SDL3/SDL_render.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -15,33 +10,33 @@
 #include <sys/types.h>
 
 #ifdef SCP_ENABLE_X11
-#include "Implementations/X11/Screenshot_X11.hpp"
+#include "Implementations/X11/Screenshooter_X11.hpp"
 #elif defined SCP_ENABLE_WAYLAND
-#include "Implementations/Wayland/Screenshot_Wayland.hpp"
+#include "Implementations/Wayland/Screenshooter_Wayland.hpp"
 #elif defined SCP_ENABLE_LINUX
-#include "Implementations/X11/Screenshot_X11.hpp"
-#include "Implementations/Wayland/Screenshot_Wayland.hpp"
+#include "Implementations/X11/Screenshooter_X11.hpp"
+#include "Implementations/Wayland/Screenshooter_Wayland.hpp"
 #endif // SCP_ENABLE_X11
 
 namespace scp
 {
     // Create an instance of Screenshot based on the platform.
-    std::unique_ptr<Screenshot> Screenshot::CreateInstance()
+    std::unique_ptr<Screenshooter> Screenshooter::CreateInstance()
     {
 #ifdef SCP_ENABLE_X11
-        return std::make_unique<Screenshot_X11>();
+        return std::make_unique<Screenshooter_X11>();
 #elif defined SCP_ENABLE_WAYLAND
-        return std::make_unique<Screenshot_Wayland>();
+        return std::make_unique<Screenshooter_Wayland>();
 #elif defined SCP_ENABLE_LINUX
         std::string sessionType = std::getenv("XDG_SESSION_TYPE");
 
         if (std::getenv("DISPLAY") && sessionType.compare("x11") == 0)
         {
-            return std::make_unique<Screenshot_X11>();
+            return std::make_unique<Screenshooter_X11>();
         }
         else if (std::getenv("WAYLAND_DISPLAY") && sessionType.compare("wayland") == 0)
         {
-            return std::make_unique<Screenshot_Wayland>();
+            return std::make_unique<Screenshooter_Wayland>();
         }
 #endif
 
@@ -51,7 +46,7 @@ namespace scp
     }
 
     // Converts an image's pixel data from it's format to RGBA.
-    void Screenshot::ConvertPixelFormat()
+    void Screenshooter::ConvertPixelFormat()
     {
         int bytesPerPixel = this->_Info.bitsPerPixel / 8;
 
@@ -99,7 +94,7 @@ namespace scp
     }
 
     // Destroys image pixel data
-    void Screenshot::_Destroy()
+    void Screenshooter::_Destroy()
     {
         delete[] this->_Info.pixels;
     }

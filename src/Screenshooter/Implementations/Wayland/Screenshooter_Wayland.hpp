@@ -1,7 +1,7 @@
-#ifndef SCP_SCREENSHOT_WAYLAND
-#define SCP_SCREENSHOT_WAYLAND
+#ifndef SCP_SCREENSHOOTER_WAYLAND
+#define SCP_SCREENSHOOTER_WAYLAND
 
-#include "Screenshot/Screenshot.hpp"
+#include "Screenshooter/Screenshooter.hpp"
 
 #include <SDL3/SDL_render.h>
 #include <sdbus-c++/sdbus-c++.h>
@@ -12,7 +12,7 @@
 
 namespace scp
 {
-    class Screenshot_Wayland : public Screenshot
+    class Screenshooter_Wayland : public Screenshooter
     {
         public:
             void Take() override;

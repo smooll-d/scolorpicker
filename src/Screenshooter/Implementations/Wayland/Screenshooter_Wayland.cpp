@@ -1,4 +1,4 @@
-#include "Screenshot_Wayland.hpp"
+#include "Screenshooter_Wayland.hpp"
 
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
@@ -12,7 +12,7 @@
 
 namespace scp
 {
-    void Screenshot_Wayland::Take()
+    void Screenshooter_Wayland::Take()
     {
         sdbus::ServiceName desktopService{"org.freedesktop.portal.Desktop"};
         sdbus::ServiceName RequestService{"org.freedesktop.portal.Request"};
@@ -59,7 +59,7 @@ namespace scp
         }
     }
 
-    SDL_Texture *Screenshot_Wayland::CreateTexture(SDL_Renderer *renderer)
+    SDL_Texture *Screenshooter_Wayland::CreateTexture(SDL_Renderer *renderer)
     {
         SDL_Surface *surface = IMG_Load(this->_ScreenshotPath.c_str());
         if (!surface)
@@ -82,7 +82,7 @@ namespace scp
         return texture;
     }
 
-    void Screenshot_Wayland::_OnScreenshot(uint32_t response, std::map<std::string, sdbus::Variant> results)
+    void Screenshooter_Wayland::_OnScreenshot(uint32_t response, std::map<std::string, sdbus::Variant> results)
     {
         _Connection->leaveEventLoop();
 

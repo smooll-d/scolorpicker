@@ -1,4 +1,4 @@
-#include "Screenshot_X11.hpp"
+#include "Screenshooter_X11.hpp"
 
 #ifdef SCP_ENABLE_XLIB
 #include <X11/X.h>
@@ -23,7 +23,7 @@ namespace scp
 
 #ifdef SCP_ENABLE_XLIB
     // Populate Info struct with data using Xlib's XGetImage() function.
-    void Screenshot_X11::Take()
+    void Screenshooter_X11::Take()
     {
         Display *display = XOpenDisplay(nullptr);
         if (!display)
@@ -77,7 +77,7 @@ namespace scp
 
 #ifdef SCP_ENABLE_XCB
     // Populate Info struct with image data using xcb.
-    void Screenshot_X11::Take()
+    void Screenshooter_X11::Take()
     {
         int defaultRootWindow;
 
@@ -134,7 +134,7 @@ namespace scp
     }
 #endif // SCP_ENABLE_XCB
 
-    SDL_Texture *Screenshot_X11::CreateTexture(SDL_Renderer *renderer)
+    SDL_Texture *Screenshooter_X11::CreateTexture(SDL_Renderer *renderer)
     {
         SDL_Surface *surface = SDL_CreateSurfaceFrom(this->_Info.width, this->_Info.height, SDL_PIXELFORMAT_RGBA32, this->_Info.pixels, this->_Info.pitch);
         if (!surface)
@@ -160,7 +160,7 @@ namespace scp
     }
 
 #ifdef SCP_ENABLE_XCB
-    xcb_screen_t *Screenshot_X11::GetScreen(xcb_connection_t *connection, int screen)
+    xcb_screen_t *Screenshooter_X11::GetScreen(xcb_connection_t *connection, int screen)
     {
         xcb_screen_iterator_t iterator;
 
@@ -175,7 +175,7 @@ namespace scp
         return nullptr;
     }
 
-    xcb_visualtype_t *Screenshot_X11::GetVisualType(xcb_connection_t *connection, xcb_screen_t *screen)
+    xcb_visualtype_t *Screenshooter_X11::GetVisualType(xcb_connection_t *connection, xcb_screen_t *screen)
     {
         xcb_depth_iterator_t depthIterator = xcb_screen_allowed_depths_iterator(screen);
         for (; depthIterator.rem; xcb_depth_next(&depthIterator))
