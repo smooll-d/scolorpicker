@@ -1,4 +1,5 @@
 #include "CLI/CLI.hpp"
+#include "SDL3/SDL_video.h"
 #include "Screenshooter/Screenshooter.hpp"
 #include "config.hpp"
 
@@ -23,10 +24,29 @@ struct AppState
     float mouseY;
 };
 
-/*
- * TODO: Set window size to full monitor size regardless of whether it's in fullscreen or not.
- * We need to do this, so that reading pixel colors works properly.
-*/
+SDL_AppResult CreateCursor(AppState *appState)
+{
+    SDL_Surface *cursorSurface = SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor.bmp");
+    if (!cursorSurface)
+    {
+        SDL_Log("Failed to create cursor surface: %s", SDL_GetError());
+
+        return SDL_APP_FAILURE;
+    }
+
+    appState->cursor = SDL_CreateColorCursor(cursorSurface, cursorSurface->w / 2, cursorSurface->h / 2);
+    if (!appState->cursor)
+    {
+        SDL_Log("Failed to create cursor: %s", SDL_GetError());
+
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_SetCursor(appState->cursor);
+    SDL_DestroySurface(cursorSurface);
+
+    return SDL_APP_CONTINUE;
+}
 
 /*
  * TODO: convert pixels under cursor to RGB or HEX values.
@@ -55,31 +75,18 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
 
     if (!SDL_CreateWindowAndRenderer("scolorpicker", 0, 0, SDL_WINDOW_FULLSCREEN, &appState->window, &appState->renderer))
-    // if (!SDL_CreateWindowAndRenderer("scolorpicker", 1280, 720, 0, &window, &renderer))
     {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
 
         return SDL_APP_FAILURE;
     }
 
-    SDL_Surface *cursorSurface = SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor.bmp");
-    if (!cursorSurface)
-    {
-        SDL_Log("Failed to create cursor surface: %s", SDL_GetError());
+    SDL_DisplayID windowDisplayID = SDL_GetDisplayForWindow(appState->window);
+    const SDL_DisplayMode *windowDisplay = SDL_GetDesktopDisplayMode(windowDisplayID);
 
-        return SDL_APP_FAILURE;
-    }
+    SDL_SetWindowSize(appState->window, windowDisplay->w, windowDisplay->h);
 
-    appState->cursor = SDL_CreateColorCursor(cursorSurface, cursorSurface->w / 2, cursorSurface->h / 2);
-    if (!appState->cursor)
-    {
-        SDL_Log("Failed to create cursor: %s", SDL_GetError());
-
-        return SDL_APP_FAILURE;
-    }
-
-    SDL_SetCursor(appState->cursor);
-    SDL_DestroySurface(cursorSurface);
+    CreateCursor(appState);
 
     appState->screenshot = screenshooter->CreateTexture(appState->renderer);
 
@@ -99,10 +106,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             {
                 case SDLK_ESCAPE:
                     return SDL_APP_SUCCESS;
-                case SDLK_F:
-                    SDL_SetWindowFullscreen(appState->window, true);
-
-                    break;
                 default:
                     break;
             }
@@ -117,7 +120,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
                     std::cout << appState->mouseX << ' ' << appState->mouseY << '\n';
 
                     return SDL_APP_SUCCESS;
-                    // return SDL_APP_CONTINUE;
                 default:
                     break;
             }
