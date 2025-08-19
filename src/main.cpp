@@ -1,5 +1,4 @@
 #include "CLI/CLI.hpp"
-#include "SDL3/SDL_video.h"
 #include "Screenshooter/Screenshooter.hpp"
 #include "config.hpp"
 
@@ -22,31 +21,58 @@ struct AppState
 
     float mouseX;
     float mouseY;
+
+    int cursorW;
+    int cursorH;
+
+    SDL_AppResult CreateCursor()
+    {
+        SDL_Surface *cursorSurfaces[4]
+        {
+            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_16x16.bmp"),
+            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_32x32.bmp"),
+            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_64x64.bmp"),
+            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_128x128.bmp")
+        };
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (!cursorSurfaces[i])
+            {
+                SDL_Log("Failed to create cursor surface: %s", SDL_GetError());
+
+                return SDL_APP_FAILURE;
+            }
+        }
+
+        for (int i = 1; i < 4; i++)
+        {
+            if (!SDL_AddSurfaceAlternateImage(cursorSurfaces[0], cursorSurfaces[i]))
+            {
+                SDL_Log("Failed to add alternate cursor surface: %s", SDL_GetError());
+            }
+
+            SDL_DestroySurface(cursorSurfaces[i]);
+        }
+
+        cursor = SDL_CreateColorCursor(cursorSurfaces[0], cursorSurfaces[0]->w / 2, cursorSurfaces[0]->h / 2);
+        if (!cursor)
+        {
+            SDL_Log("Failed to create cursor: %s", SDL_GetError());
+
+            return SDL_APP_FAILURE;
+        }
+
+        SDL_SetCursor(cursor);
+
+        cursorW = cursorSurfaces[0]->w;
+        cursorH = cursorSurfaces[0]->h;
+
+        SDL_DestroySurface(cursorSurfaces[0]);
+
+        return SDL_APP_CONTINUE;
+    }
 };
-
-SDL_AppResult CreateCursor(AppState *appState)
-{
-    SDL_Surface *cursorSurface = SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor.bmp");
-    if (!cursorSurface)
-    {
-        SDL_Log("Failed to create cursor surface: %s", SDL_GetError());
-
-        return SDL_APP_FAILURE;
-    }
-
-    appState->cursor = SDL_CreateColorCursor(cursorSurface, cursorSurface->w / 2, cursorSurface->h / 2);
-    if (!appState->cursor)
-    {
-        SDL_Log("Failed to create cursor: %s", SDL_GetError());
-
-        return SDL_APP_FAILURE;
-    }
-
-    SDL_SetCursor(appState->cursor);
-    SDL_DestroySurface(cursorSurface);
-
-    return SDL_APP_CONTINUE;
-}
 
 /*
  * TODO: convert pixels under cursor to RGB or HEX values.
@@ -86,7 +112,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     SDL_SetWindowSize(appState->window, windowDisplay->w, windowDisplay->h);
 
-    CreateCursor(appState);
+    appState->CreateCursor();
 
     appState->screenshot = screenshooter->CreateTexture(appState->renderer);
 
