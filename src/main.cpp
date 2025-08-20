@@ -8,13 +8,18 @@
 
 #include <format>
 #include <iostream>
+#include <filesystem>
 
 struct AppState
 {
+    std::filesystem::path cwd;
+
     SDL_Window *window;
+
     SDL_Renderer *renderer;
 
     SDL_Texture *screenshot;
+
     SDL_Surface *screenshotPixels;
 
     SDL_Cursor *cursor;
@@ -29,10 +34,10 @@ struct AppState
     {
         SDL_Surface *cursorSurfaces[4]
         {
-            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_16x16.bmp"),
-            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_32x32.bmp"),
-            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_64x64.bmp"),
-            SDL_LoadBMP("/home/smooll/Projects/Applications/CPP/scolorpicker/data/cursors/cursor_128x128.bmp")
+            SDL_LoadBMP(std::format("{}data/cursors/cursor_16x16.bmp", cwd.c_str()).c_str()),
+            SDL_LoadBMP(std::format("{}data/cursors/cursor_32x32.bmp", cwd.c_str()).c_str()),
+            SDL_LoadBMP(std::format("{}data/cursors/cursor_64x64.bmp", cwd.c_str()).c_str()),
+            SDL_LoadBMP(std::format("{}data/cursors/cursor_128x128.bmp", cwd.c_str()).c_str())
         };
 
         for (int i = 0; i < 4; i++)
@@ -85,6 +90,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     AppState *appState = static_cast<AppState*>(SDL_calloc(1, sizeof(AppState)));
     *appstate = appState;
+
+    appState->cwd = argv[0];
+    appState->cwd = appState->cwd.remove_filename();
 
     scp::CLI cli(argc, argv);
 
