@@ -30,7 +30,7 @@ struct AppState
     int cursorW;
     int cursorH;
 
-    SDL_AppResult CreateCursor()
+    void CreateCursor()
     {
         SDL_Surface *cursorSurfaces[4]
         {
@@ -45,8 +45,6 @@ struct AppState
             if (!cursorSurfaces[i])
             {
                 SDL_Log("Failed to create cursor surface: %s", SDL_GetError());
-
-                return SDL_APP_FAILURE;
             }
         }
 
@@ -64,8 +62,6 @@ struct AppState
         if (!cursor)
         {
             SDL_Log("Failed to create cursor: %s", SDL_GetError());
-
-            return SDL_APP_FAILURE;
         }
 
         SDL_SetCursor(cursor);
@@ -74,8 +70,6 @@ struct AppState
         cursorH = cursorSurfaces[0]->h;
 
         SDL_DestroySurface(cursorSurfaces[0]);
-
-        return SDL_APP_CONTINUE;
     }
 };
 
