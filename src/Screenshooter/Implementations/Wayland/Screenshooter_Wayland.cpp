@@ -37,19 +37,20 @@ namespace scp
 
             auto requestProxy = sdbus::createProxy(*_Connection, desktopService, requestObject);
             requestProxy->uponSignal(responseSignal)
-                        .onInterface(requestInterface)
-                        .call([this](uint32_t response, std::map<std::string, sdbus::Variant> results)
-                                { this->_OnScreenshot(response, results); }
-                        );
+                         .onInterface(requestInterface)
+                         .call([this](uint32_t response, std::map<std::string, sdbus::Variant> results)
+                             { this->_OnScreenshot(response, results); }
+                         );
 
             auto screenshotProxy = sdbus::createProxy(*_Connection, desktopService, desktopObject);
             screenshotProxy->callMethod(screenshotMethod)
                             .onInterface(screenshotInterface)
-                            .withArguments("dev.smooll.scolorpicker", std::map<std::string, sdbus::Variant>{
-                                                                                      { "handle_token", sdbus::Variant(token) },
-                                                                                      { "modal", sdbus::Variant(true) },
-                                                                                      { "interactive", sdbus::Variant(false) }
-                                                                                      });
+                            .withArguments("dev.smooll.scolorpicker", std::map<std::string, sdbus::Variant>
+                            {
+                                { "handle_token", sdbus::Variant(token) },
+                                { "modal", sdbus::Variant(true) },
+                                { "interactive", sdbus::Variant(false) }
+                            });
 
             _Connection->enterEventLoop();
         }
@@ -87,12 +88,8 @@ namespace scp
         _Connection->leaveEventLoop();
 
         if (response == 0)
-        {
             this->_ScreenshotPath = results["uri"].get<std::string>().erase(0, 7);
-        }
         else
-        {
             std::cout << "Could not take screenshot!\n";
-        }
     }
 }

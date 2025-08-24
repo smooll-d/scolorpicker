@@ -57,15 +57,16 @@ namespace scp
             std::exit(1);
         }
 
-        this->SetWidth(screenshot->width);
-        this->SetHeight(screenshot->height);
-        this->SetPitch(screenshot->bytes_per_line);
-        this->SetBitsPerPixel(screenshot->bits_per_pixel);
-        this->SetRedMask(screenshot->red_mask);
-        this->SetGreenMask(screenshot->green_mask);
-        this->SetBlueMask(screenshot->blue_mask);
-        this->SetPixels(reinterpret_cast<uint8_t*>(screenshot->data));
-        this->SetSize(screenshot->width * screenshot->height * (screenshot->bits_per_pixel / 8));
+        this->_Info.width = screenshot->width;
+        this->_Info.height = screenshot->height;
+        this->_Info.pitch = screenshot->bytes_per_line;
+        this->_Info.bitsPerPixel = screenshot->bits_per_pixel;
+        this->_Info.redMask = screenshot->red_mask;
+        this->_Info.greenMask = screenshot->green_mask;
+        this->_Info.blueMask = screenshot->blue_mask;
+        this->_Info.pixels = reinterpret_cast<uint8_t*>(screenshot->data);
+        this->_Info.size = screenshot->width * screenshot->height * (screenshot->bits_per_pixel / 8);
+
         this->ConvertPixelFormat();
 
         // NOTE: For some reason XDestroyImage() doesn't exist, so instead of using that, we'll just manually expand the macro
@@ -116,15 +117,16 @@ namespace scp
             std::exit(1);
         }
 
-        this->SetWidth(screenshot->width);
-        this->SetHeight(screenshot->height);
-        this->SetPitch(screenshot->stride);
-        this->SetBitsPerPixel(screenshot->bpp);
-        this->SetRedMask(visualType->red_mask);
-        this->SetGreenMask(visualType->green_mask);
-        this->SetBlueMask(visualType->blue_mask);
-        this->SetPixels(reinterpret_cast<uint8_t*>(screenshot->data));
-        this->SetSize(screenshot->size);
+        this->_Info.width = screenshot->width;
+        this->_Info.height = screenshot->height;
+        this->_Info.pitch = screenshot->stride;
+        this->_Info.bitsPerPixel = screenshot->bpp;
+        this->_Info.redMask = visualType->red_mask;
+        this->_Info.greenMask = visualType->green_mask;
+        this->_Info.blueMask = visualType->blue_mask;
+        this->_Info.pixels = reinterpret_cast<uint8_t*>(screenshot->data);
+        this->_Info.size = screenshot->size;
+
         this->ConvertPixelFormat();
 
         xcb_image_destroy(screenshot);
@@ -165,7 +167,9 @@ namespace scp
         uint8_t *convertedPixels = new uint8_t[this->_Info.size];
 
         std::size_t offset;
+
         uint32_t pixel;
+
         uint8_t red;
         uint8_t green;
         uint8_t blue;
@@ -203,6 +207,8 @@ namespace scp
         }
 
         this->_Info.pixels = convertedPixels;
+
+        delete[] convertedPixels;
     }
 
     void Screenshooter_X11::_Destroy()
@@ -218,9 +224,8 @@ namespace scp
         iterator = xcb_setup_roots_iterator(xcb_get_setup(connection));
         for (; iterator.rem; --screen, xcb_screen_next(&iterator))
         {
-            if (screen == 0) {
+            if (screen == 0)
                 return iterator.data;
-            }
         }
 
         return nullptr;
@@ -235,9 +240,7 @@ namespace scp
             for (; visualTypeIterator.rem; xcb_visualtype_next(&visualTypeIterator))
             {
                 if (screen->root_visual == visualTypeIterator.data->visual_id)
-                {
                     return visualTypeIterator.data;
-                }
             }
         }
 

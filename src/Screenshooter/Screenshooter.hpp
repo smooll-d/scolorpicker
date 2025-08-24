@@ -15,7 +15,6 @@ namespace scp
             virtual void Take() = 0;
 
             virtual SDL_Texture *CreateTexture(SDL_Renderer *renderer) = 0;
-        protected:
     };
 } // namespace scp
 
