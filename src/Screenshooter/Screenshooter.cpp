@@ -1,11 +1,6 @@
 #include "Screenshooter.hpp"
 #include "config.hpp"
 
-#include <cstdlib>
-#include <iostream>
-#include <memory>
-#include <sys/types.h>
-
 #ifdef SCP_ENABLE_X11
 #include "Implementations/X11/Screenshooter_X11.hpp"
 #elif defined SCP_ENABLE_WAYLAND
@@ -14,6 +9,11 @@
 #include "Implementations/X11/Screenshooter_X11.hpp"
 #include "Implementations/Wayland/Screenshooter_Wayland.hpp"
 #endif // SCP_ENABLE_X11
+
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <sys/types.h>
 
 namespace scp
 {
@@ -27,13 +27,9 @@ namespace scp
         std::string sessionType = std::getenv("XDG_SESSION_TYPE");
 
         if (std::getenv("DISPLAY") && sessionType.compare("x11") == 0)
-        {
             return std::make_unique<Screenshooter_X11>();
-        }
         else if (std::getenv("WAYLAND_DISPLAY") && sessionType.compare("wayland") == 0)
-        {
             return std::make_unique<Screenshooter_Wayland>();
-        }
 #endif
 
         std::cerr << "Failed to determine platform!\n";

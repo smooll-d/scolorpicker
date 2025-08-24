@@ -16,6 +16,7 @@ namespace scp
                 std::string output = "terminal";
             };
 
+            CLI() = default;
             CLI(int argc, char *argv[]);
 
             const Info &GetInfo() { return _Info; }
@@ -25,14 +26,14 @@ namespace scp
             void _ShowVersion();
             void _HandleParameters(std::string parameter);
 
+            Info _Info;
+
             int _ParameterCount;
 
             std::vector<std::string> _Parameters;
 
             std::vector<std::string>::iterator _ParameterIterator;
             std::iterator_traits<decltype(_ParameterIterator)>::difference_type _ParameterDistance;
-
-            Info _Info;
     };
 } // namespace scp
 

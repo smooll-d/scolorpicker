@@ -2,9 +2,6 @@
 #include "Utils/Utils.hpp"
 #include "config.hpp"
 
-#include <SDL3/SDL_version.h>
-#include <SDL3_ttf/SDL_ttf.h>
-
 #include <algorithm>
 #include <cstdlib>
 #include <format>
@@ -22,7 +19,7 @@ namespace scp
         for (const auto &parameter : this->_Parameters)
         {
             if (parameter.starts_with("--") || parameter.starts_with("-"))
-            { this->_HandleParameters(parameter); }
+                this->_HandleParameters(parameter);
         }
     }
 
@@ -43,11 +40,11 @@ namespace scp
         else if (parameter == "--format" || parameter == "-f")
         {
             if (this->_FindArgument(parameter, "hex"))
-            { this->_Info.format = "hex"; }
+                this->_Info.format = "hex";
             else if (this->_FindArgument(parameter, "lhex"))
-            { this->_Info.format = "lhex"; }
+                this->_Info.format = "lhex";
             else if (this->_FindArgument(parameter, "rgb"))
-            { this->_Info.format = "rgb"; }
+                this->_Info.format = "rgb";
             else
             {
                 std::cout << "Unknown format!\n";
@@ -59,12 +56,12 @@ namespace scp
         else if (parameter == "--output" || parameter == "-o")
         {
             if (this->_FindArgument(parameter, "terminal"))
-            { this->_Info.output = "terminal"; }
+                this->_Info.output = "terminal";
             else if (this->_FindArgument(parameter, "clipboard"))
-            { this->_Info.output = "clipboard"; }
+                this->_Info.output = "clipboard";
             else
             {
-                std::cout << "Unknown output!\n";
+                std::cout << "Unknown output type!\n";
                 std::cout << "Color will be output to \"terminal\"\n";
             }
 
@@ -85,7 +82,7 @@ namespace scp
         std::string lowercase = Utils::TRed("#ff0000");
         std::string rgb = Utils::TRed("rgb(255, 0, 0)");
 
-        std::cout << std::format(R"(Usage: scolorpicker [Options]
+        std::cout << R"(Usage: scolorpicker [Options]
 
 Options:
     --help,    -h          Show this message and exit
@@ -94,13 +91,13 @@ Options:
     --output,  -o <Output> Where formatted color value is sent to
 
 Format:
-    hex                    Hexadecimal (e.g. {})                   [DEFAULT]
-    lhex                   Hexadecimal in lowercase (e.g. {})
-    rgb                    RGB (e.g. {})
+    hex                    Hexadecimal (e.g. #FF0000)                   [DEFAULT]
+    lhex                   Hexadecimal in lowercase (e.g. #00ff00)
+    rgb                    RGB (e.g. rgb(255, 128, 0))
 
 Output:
     terminal               Print color in specified format to terminal  [DEFAULT]
-    clipboard              Send color in specified format to clipboard))", uppercase, lowercase, rgb)
+    clipboard              Send color in specified format to clipboard))"
                   << '\n';
     }
 
@@ -108,9 +105,7 @@ Output:
     {
         std::string heart = Utils::TRed("<3", "foreground");
 
-        std::cout << std::format("scolorpicker v{}.{}.{}", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH) << '\n';
-        std::cout << std::format("SDL v{}", SDL_VERSION) << '\n';
-        std::cout << std::format("SDL_ttf v{}", TTF_Version()) << "\n\n";
+        std::cout << std::format("scolorpicker v{}.{}.{}", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH) << "\n\n";
         std::cout << std::format("Made with {} by Jakub Skowron (@smooll-d)", heart) << '\n';
     }
 

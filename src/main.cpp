@@ -14,6 +14,8 @@ struct AppState
 {
     std::filesystem::path cwd;
 
+    scp::CLI cli;
+
     SDL_Window *window;
 
     SDL_Renderer *renderer;
@@ -30,6 +32,8 @@ struct AppState
     int cursorW;
     int cursorH;
 
+    uint32_t *pixels;
+
     void CreateCursor()
     {
         SDL_Surface *cursorSurfaces[4]
@@ -43,26 +47,20 @@ struct AppState
         for (int i = 0; i < 4; i++)
         {
             if (!cursorSurfaces[i])
-            {
                 SDL_Log("Failed to create cursor surface: %s", SDL_GetError());
-            }
         }
 
         for (int i = 1; i < 4; i++)
         {
             if (!SDL_AddSurfaceAlternateImage(cursorSurfaces[0], cursorSurfaces[i]))
-            {
                 SDL_Log("Failed to add alternate cursor surface: %s", SDL_GetError());
-            }
 
             SDL_DestroySurface(cursorSurfaces[i]);
         }
 
         cursor = SDL_CreateColorCursor(cursorSurfaces[0], cursorSurfaces[0]->w / 2, cursorSurfaces[0]->h / 2);
         if (!cursor)
-        {
             SDL_Log("Failed to create cursor: %s", SDL_GetError());
-        }
 
         SDL_SetCursor(cursor);
 
@@ -80,6 +78,35 @@ struct AppState
  * the terminal.
 */
 
+uint32_t *GetPixels(SDL_Surface *pixelSurface)
+{
+    SDL_Surface *tempSurface = pixelSurface;
+
+    if (tempSurface->format != SDL_PIXELFORMAT_RGBA32)
+        SDL_ConvertSurface(tempSurface, SDL_PIXELFORMAT_RGBA32);
+
+    uint32_t *pixels = static_cast<uint32_t*>(tempSurface->pixels);
+
+    return pixels;
+}
+
+std::string GetColorHex(SDL_Surface *pixelSurface, int mouseX, int mouseY)
+{
+    uint32_t *pixels = GetPixels(pixelSurface);
+
+    uint8_t red = 0;
+    uint8_t green = 0;
+    uint8_t blue = 0;
+
+    std::size_t offset = mouseY * pixelSurface->h + mouseX * pixelSurface->w;
+
+    red |= pixels[offset];
+    green |= pixels[offset + 1] << 8;
+    blue |= pixels[offset + 2] << 16;
+
+    return std::format("#{}{}{}", red, green, blue);
+}
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     AppState *appState = static_cast<AppState*>(SDL_calloc(1, sizeof(AppState)));
@@ -88,12 +115,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     appState->cwd = argv[0];
     appState->cwd = appState->cwd.remove_filename();
 
-    scp::CLI cli(argc, argv);
+    new (&appState->cli) scp::CLI{argc, argv};
 
     auto screenshooter{scp::Screenshooter::CreateInstance()};
     screenshooter->Take();
 
-    SDL_SetAppMetadata("scolorpicker", std::format("{}.{}.{}", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH).c_str(), "dev.smooll.scolorpicker");
+    SDL_SetAppMetadata("scolorpicker",
+                       std::format("{}.{}.{}", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH).c_str(),
+                       "dev.smooll.scolorpicker");
 
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
@@ -102,7 +131,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("scolorpicker", 0, 0, SDL_WINDOW_FULLSCREEN, &appState->window, &appState->renderer))
+    if (!SDL_CreateWindowAndRenderer("scolorpicker", 0, 0, 0, &appState->window, &appState->renderer))
     {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
 
@@ -143,9 +172,9 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             switch (event->button.button)
             {
                 case 1:
-                    std::cout << appState->screenshotPixels->w << ' ' << appState->screenshotPixels->h << '\n';
+                    appState->pixels = GetPixels(appState->screenshotPixels);
 
-                    std::cout << appState->mouseX << ' ' << appState->mouseY << '\n';
+                    std::cout << GetColorHex(appState->screenshotPixels, appState->mouseX, appState->mouseY) << '\n';
 
                     return SDL_APP_SUCCESS;
                 default:
@@ -175,9 +204,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     SDL_RenderTexture(appState->renderer, appState->screenshot, nullptr, nullptr);
 
     if (!appState->screenshotPixels)
-    {
         appState->screenshotPixels = SDL_RenderReadPixels(appState->renderer, nullptr);
-    }
 
     SDL_RenderPresent(appState->renderer);
 
@@ -195,6 +222,8 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
         SDL_DestroyTexture(appState->screenshot);
 
         SDL_DestroyCursor(appState->cursor);
+
+        appState->cli.~CLI();
 
         SDL_free(appState);
     }

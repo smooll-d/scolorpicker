@@ -2,7 +2,6 @@
 
 #include <SDL3/SDL.h>
 
-#include <cstddef>
 #include <sstream>
 
 namespace scp
@@ -14,9 +13,9 @@ namespace scp
             std::stringstream ss;
 
             if (ground == "background")
-            { ss << "\e[41m" << str << "\e[0m"; }
+            ss << "\e[41m" << str << "\e[0m";
             else if (ground == "foreground")
-            { ss << "\e[1;31m" << str << "\e[0m"; }
+            ss << "\e[1;31m" << str << "\e[0m";
 
             return ss.str();
         }
