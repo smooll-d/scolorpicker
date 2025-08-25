@@ -45,6 +45,8 @@ namespace scp
                 this->_Info.format = "lhex";
             else if (this->_FindArgument(parameter, "rgb"))
                 this->_Info.format = "rgb";
+            else if (this->_FindArgument(parameter, "hsl"))
+                this->_Info.format = "hsl";
             else
             {
                 std::cout << "Unknown format!\n";

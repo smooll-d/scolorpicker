@@ -1,6 +1,12 @@
 #include "CLI/CLI.hpp"
+#include "SDL3/SDL_pixels.h"
+#include "SDL3/SDL_surface.h"
 #include "Screenshooter/Screenshooter.hpp"
 #include "config.hpp"
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
@@ -31,8 +37,6 @@ struct AppState
 
     int cursorW;
     int cursorH;
-
-    uint32_t *pixels;
 
     void CreateCursor()
     {
@@ -71,40 +75,88 @@ struct AppState
     }
 };
 
-/*
- * TODO: convert pixels under cursor to RGB or HEX values.
- * I think HEX values are going to be easier since they're already hex values
- * so, I'd just need to format them into text (#rrggbb) and display them in
- * the terminal.
-*/
-
-uint32_t *GetPixels(SDL_Surface *pixelSurface)
+uint32_t GetPixel(SDL_Surface *surface, int mouseX, int mouseY)
 {
-    SDL_Surface *tempSurface = pixelSurface;
+    const SDL_PixelFormatDetails *pixelFormatDetails = SDL_GetPixelFormatDetails(surface->format);
 
-    if (tempSurface->format != SDL_PIXELFORMAT_RGBA32)
-        SDL_ConvertSurface(tempSurface, SDL_PIXELFORMAT_RGBA32);
+    uint8_t *pixel = static_cast<uint8_t*>(surface->pixels)
+                   + mouseY * surface->pitch + mouseX * (pixelFormatDetails->bytes_per_pixel);
 
-    uint32_t *pixels = static_cast<uint32_t*>(tempSurface->pixels);
-
-    return pixels;
+    switch (pixelFormatDetails->bytes_per_pixel)
+    {
+        case 1:
+            return *pixel;
+            break;
+        case 2:
+            return *reinterpret_cast<uint16_t*>(pixel);
+            break;
+        case 3:
+            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+                return pixel[0] << 16 | pixel[1] << 8 | pixel[2];
+            else
+                return pixel[0] | pixel[1] << 8 | pixel[2] << 16;
+            break;
+        case 4:
+            return *reinterpret_cast<uint32_t*>(pixel);
+            break;
+        default:
+            return 0;
+            break;
+    }
 }
 
-std::string GetColorHex(SDL_Surface *pixelSurface, int mouseX, int mouseY)
+std::string GetColor(AppState *appState, SDL_Surface *surface, int mouseX, int mouseY)
 {
-    uint32_t *pixels = GetPixels(pixelSurface);
+    SDL_Color color;
 
-    uint8_t red = 0;
-    uint8_t green = 0;
-    uint8_t blue = 0;
+    const SDL_PixelFormatDetails *pixelFormatDetails = SDL_GetPixelFormatDetails(surface->format);
 
-    std::size_t offset = mouseY * pixelSurface->h + mouseX * pixelSurface->w;
+    uint32_t pixel = GetPixel(surface, mouseX, mouseY);
 
-    red |= pixels[offset];
-    green |= pixels[offset + 1] << 8;
-    blue |= pixels[offset + 2] << 16;
+    SDL_GetRGB(pixel, pixelFormatDetails, nullptr, &color.r, &color.g, &color.b);
 
-    return std::format("#{}{}{}", red, green, blue);
+    pixel = color.r << 16 | color.g << 8 | color.b;
+
+    if (appState->cli.GetInfo().format == "rgb")
+        return std::format("rgb({},{},{})", color.r, color.b, color.g);
+    else if (appState->cli.GetInfo().format == "hex")
+        return std::format("#{:06X}", pixel);
+    else if (appState->cli.GetInfo().format == "lhex")
+        return std::format("#{:06x}", pixel);
+    else if (appState->cli.GetInfo().format == "hsl")
+    {
+        double r = static_cast<double>(color.r) / 255.0;
+        double g = static_cast<double>(color.g) / 255.0;
+        double b = static_cast<double>(color.b) / 255.0;
+
+        const double min = std::min({r, g, b});
+        const double max = std::max({r, g, b});
+
+        const double delta = max - min;
+
+        double H = 0.0;
+        double L = (max + min) / 2.0;
+        double S = delta / (1.0 - std::abs(2.0 * L - 1.0));
+
+        if (delta == 0.0)
+        {
+            H = 0.0;
+            S = 0.0;
+        }
+        else if (max == r)
+            H = 60.0 * std::fmod((g - b) / delta, 6.0);
+        else if (max == g)
+            H = 60.0 * ((b - r) / delta + 2.0);
+        else if (max == b)
+            H = 60.0 * ((r - g) / delta + 4.0);
+
+        return std::format("hsl({},{},{})",
+                           static_cast<int>(std::round(H)),
+                           static_cast<int>(std::round(S * 100.0)),
+                           static_cast<int>(std::round(L * 100.0)));
+    }
+
+    return "Failed to retrieve color!";
 }
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
@@ -131,7 +183,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("scolorpicker", 0, 0, 0, &appState->window, &appState->renderer))
+    if (!SDL_CreateWindowAndRenderer("scolorpicker",
+                                     1920, 1080,
+                                     SDL_WINDOW_FULLSCREEN,
+                                     &appState->window,
+                                     &appState->renderer))
     {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
 
@@ -172,11 +228,14 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             switch (event->button.button)
             {
                 case 1:
-                    appState->pixels = GetPixels(appState->screenshotPixels);
-
-                    std::cout << GetColorHex(appState->screenshotPixels, appState->mouseX, appState->mouseY) << '\n';
+                {
+                    std::cout << GetColor(appState,
+                                          appState->screenshotPixels,
+                                          static_cast<int>(appState->mouseX),
+                                          static_cast<int>(appState->mouseY)) << '\n';
 
                     return SDL_APP_SUCCESS;
+                }
                 default:
                     break;
             }
