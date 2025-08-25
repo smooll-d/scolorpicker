@@ -207,8 +207,6 @@ namespace scp
         }
 
         this->_Info.pixels = convertedPixels;
-
-        delete[] convertedPixels;
     }
 
     void Screenshooter_X11::_Destroy()
