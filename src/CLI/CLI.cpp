@@ -47,6 +47,10 @@ namespace scp
                 this->_Info.format = "rgb";
             else if (this->_FindArgument(parameter, "hsl"))
                 this->_Info.format = "hsl";
+            else if (this->_FindArgument(parameter, "hsv"))
+                this->_Info.format = "hsv";
+            else if (this->_FindArgument(parameter, "all"))
+                this->_Info.format = "all";
             else
             {
                 std::cout << "Unknown format!\n";
@@ -80,11 +84,7 @@ namespace scp
 
     void CLI::_ShowHelp()
     {
-        std::string uppercase = Utils::TRed("#FF0000");
-        std::string lowercase = Utils::TRed("#ff0000");
-        std::string rgb = Utils::TRed("rgb(255, 0, 0)");
-
-        std::cout << R"(Usage: scolorpicker [Options]
+        std::cout << R"(scolorpicker [Options]
 
 Options:
     --help,    -h          Show this message and exit
@@ -94,20 +94,24 @@ Options:
 
 Format:
     hex                    Hexadecimal (e.g. #FF0000)                   [DEFAULT]
-    lhex                   Hexadecimal in lowercase (e.g. #00ff00)
-    rgb                    RGB (e.g. rgb(255, 128, 0))
+    lhex                   Hexadecimal in lowercase (e.g. #ff0000)
+    rgb                    Red Green Blue (e.g. rgb(255, 0, 0))
+    hsl                    Hue Saturation Lightness (e.g. hsl(0, 100, 50))
+    hsv                    Hue Saturation Value (e.g. hsv(0, 100, 100))
+    all                    All formats separated by newlines
 
 Output:
     terminal               Print color in specified format to terminal  [DEFAULT]
-    clipboard              Send color in specified format to clipboard))"
-                  << '\n';
+    clipboard              Send color in specified format to clipboard)" << '\n';
     }
 
     void CLI::_ShowVersion()
     {
         std::string heart = Utils::TRed("<3", "foreground");
 
-        std::cout << std::format("scolorpicker v{}.{}.{}", SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH) << "\n\n";
+        std::cout << std::format("scolorpicker v{}.{}.{}",
+                                 SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH)
+                  << "\n\n";
         std::cout << std::format("Made with {} by Jakub Skowron (@smooll-d)", heart) << '\n';
     }
 
