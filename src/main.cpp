@@ -7,6 +7,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
+#include <tuple>
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
@@ -15,6 +16,15 @@
 #include <format>
 #include <iostream>
 #include <filesystem>
+
+// TODO: add clipboard support
+// TODO: add color preview (rect and text)
+// TODO: make a manpage
+// TODO: README.md rewrite
+// TODO: update AUR package
+// TODO: create new AUR package for legacy (C) version
+// TODO: merge scp2 into master
+// TODO: profit
 
 struct AppState
 {
@@ -105,6 +115,66 @@ uint32_t GetPixel(SDL_Surface *surface, int mouseX, int mouseY)
     }
 }
 
+std::tuple<double, double, double> RGBToHSL(int red, int green, int blue)
+{
+    double r = std::clamp(static_cast<double>(red), 0.0, 255.0) / 255.0;
+    double g = std::clamp(static_cast<double>(green), 0.0, 255.0) / 255.0;
+    double b = std::clamp(static_cast<double>(blue), 0.0, 255.0) / 255.0;
+
+    double cMin = std::min({r, g, b});
+    double cMax = std::max({r, g, b});
+    double delta = cMax - cMin;
+
+    double h = 0.0;
+    double l = (cMax + cMin) / 2.0;
+    double s = (delta == 0) ? 0.0 : delta / (1.0 - std::abs(2.0 * l - 1.0));
+
+    if (delta == 0)
+        h = 0.0;
+    else if (cMax == r)
+        h = 60.0 * std::fmod((g - b) / delta, 6.0);
+    else if (cMax == g)
+        h = 60.0 * ((b - r) / delta + 2.0);
+    else if (cMax == b)
+        h = 60.0 * ((r - g) / delta + 4.0);
+
+    if (h < 0.0)
+        h += 360.0;
+
+    return { h, s, l };
+}
+
+std::tuple<double, double, double> RGBToHSV(int red, int green, int blue)
+{
+    double r = std::clamp(static_cast<double>(red), 0.0, 255.0) / 255.0;
+    double g = std::clamp(static_cast<double>(green), 0.0, 255.0) / 255.0;
+    double b = std::clamp(static_cast<double>(blue), 0.0, 255.0) / 255.0;
+
+    double cMin = std::min({r, g, b});
+    double cMax = std::max({r, g, b});
+    double delta = cMax - cMin;
+
+    double h = 0.0;
+    double v = cMax;
+    double s = std::clamp(delta / cMax, 0.0, 1.0);
+
+    if (delta == 0)
+        h = 0.0;
+    else if (cMax == 0)
+        s = 0.0;
+    else if (cMax == r)
+        h = 60.0 * std::fmod((g - b) / delta, 6.0);
+    else if (cMax == g)
+        h = 60.0 * ((b - r) / delta + 2.0);
+    else if (cMax == b)
+        h = 60.0 * ((r - g) / delta + 4.0);
+
+    if (h < 0.0)
+        h += 360.0;
+
+    return { h, s, v };
+}
+
 std::string GetColor(AppState *appState, SDL_Surface *surface, int mouseX, int mouseY)
 {
     SDL_Color color;
@@ -117,43 +187,44 @@ std::string GetColor(AppState *appState, SDL_Surface *surface, int mouseX, int m
 
     pixel = color.r << 16 | color.g << 8 | color.b;
 
-    if (appState->cli.GetInfo().format == "rgb")
-        return std::format("rgb({},{},{})", color.r, color.b, color.g);
-    else if (appState->cli.GetInfo().format == "hex")
+    if (appState->cli.GetInfo().format == "hex")
         return std::format("#{:06X}", pixel);
     else if (appState->cli.GetInfo().format == "lhex")
         return std::format("#{:06x}", pixel);
+    else if (appState->cli.GetInfo().format == "rgb")
+        return std::format("rgb({}, {}, {})", color.r, color.b, color.g);
     else if (appState->cli.GetInfo().format == "hsl")
     {
-        double r = static_cast<double>(color.r) / 255.0;
-        double g = static_cast<double>(color.g) / 255.0;
-        double b = static_cast<double>(color.b) / 255.0;
+        auto hsl = RGBToHSL(color.r, color.g, color.b);
 
-        const double min = std::min({r, g, b});
-        const double max = std::max({r, g, b});
+        return std::format("hsl({}, {}, {})",
+                           std::get<0>(hsl),
+                           std::get<1>(hsl) * 100.0,
+                           std::get<2>(hsl) * 100.0);
+    }
+    else if (appState->cli.GetInfo().format == "hsv")
+    {
+        auto hsv = RGBToHSV(color.r, color.g, color.b);
 
-        const double delta = max - min;
+        return std::format("hsv({}, {}, {})",
+                           std::get<0>(hsv),
+                           std::get<1>(hsv) * 100.0,
+                           std::get<2>(hsv) * 100.0);
+    }
+    else if (appState->cli.GetInfo().format == "all")
+    {
+        auto hsl = RGBToHSL(color.r, color.g, color.b);
+        auto hsv = RGBToHSV(color.r, color.g, color.b);
 
-        double H = 0.0;
-        double L = (max + min) / 2.0;
-        double S = delta / (1.0 - std::abs(2.0 * L - 1.0));
-
-        if (delta == 0.0)
-        {
-            H = 0.0;
-            S = 0.0;
-        }
-        else if (max == r)
-            H = 60.0 * std::fmod((g - b) / delta, 6.0);
-        else if (max == g)
-            H = 60.0 * ((b - r) / delta + 2.0);
-        else if (max == b)
-            H = 60.0 * ((r - g) / delta + 4.0);
-
-        return std::format("hsl({},{},{})",
-                           static_cast<int>(std::round(H)),
-                           static_cast<int>(std::round(S * 100.0)),
-                           static_cast<int>(std::round(L * 100.0)));
+        return std::format(R"(#{0:06X}
+#{0:06x}
+rgb({1}, {2}, {3})
+hsl({4:.1f}, {5:.1f}, {6:.1f})
+hsv({7:.1f}, {8:.1f}, {9:.1f}))",
+                           pixel,
+                           color.r, color.g, color.b,
+                           std::get<0>(hsl), std::get<1>(hsl) * 100, std::get<2>(hsl) * 100,
+                           std::get<0>(hsv), std::get<1>(hsv) * 100, std::get<2>(hsv) * 100);
     }
 
     return "Failed to retrieve color!";
