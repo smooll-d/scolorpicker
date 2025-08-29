@@ -1,5 +1,6 @@
 #include "Screenshooter_X11.hpp"
 #include "Utils/Utils.hpp"
+#include <bit>
 
 #ifdef SCP_ENABLE_XLIB
 #include <X11/X.h>
@@ -64,7 +65,7 @@ namespace scp
         this->_Info.redMask = screenshot->red_mask;
         this->_Info.greenMask = screenshot->green_mask;
         this->_Info.blueMask = screenshot->blue_mask;
-        this->_Info.pixels = reinterpret_cast<uint8_t*>(screenshot->data);
+        this->_Info.pixels = std::bit_cast<uint8_t*>(screenshot->data);
         this->_Info.size = screenshot->width * screenshot->height * (screenshot->bits_per_pixel / 8);
 
         this->ConvertPixelFormat();
@@ -124,7 +125,7 @@ namespace scp
         this->_Info.redMask = visualType->red_mask;
         this->_Info.greenMask = visualType->green_mask;
         this->_Info.blueMask = visualType->blue_mask;
-        this->_Info.pixels = reinterpret_cast<uint8_t*>(screenshot->data);
+        this->_Info.pixels = std::bit_cast<uint8_t*>(screenshot->data);
         this->_Info.size = screenshot->size;
 
         this->ConvertPixelFormat();
