@@ -1,13 +1,12 @@
 #include "CLI/CLI.hpp"
-#include "SDL3/SDL_oldnames.h"
-#include "SDL3/SDL_rect.h"
-#include "SDL3/SDL_render.h"
+#include "SDL3/SDL_pixels.h"
 #include "Screenshooter/Screenshooter.hpp"
 #include "config.hpp"
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 #include <format>
 #include <iostream>
@@ -46,10 +45,6 @@ struct AppState
 
     SDL_FRect colorView;
     SDL_FRect colorViewBorder;
-
-    SDL_Color color;
-
-    const SDL_PixelFormatDetails *pixelFormatDetails;
 
     float mouseX;
     float mouseY;
@@ -124,6 +119,19 @@ uint32_t GetPixel(SDL_Surface *surface, int mouseX, int mouseY)
     }
 }
 
+SDL_Color GetColor(AppState *appState, SDL_Surface *surface, int mouseX, int mouseY)
+{
+    SDL_Color color;
+
+    const SDL_PixelFormatDetails *pixelFormatDetails = SDL_GetPixelFormatDetails(surface->format);
+
+    uint32_t pixel = GetPixel(surface, mouseX, mouseY);
+
+    SDL_GetRGB(pixel, pixelFormatDetails, nullptr, &color.r, &color.g, &color.b);
+
+    return color;
+}
+
 std::tuple<double, double, double> RGBToHSL(int red, int green, int blue)
 {
     double r = std::clamp(static_cast<double>(red), 0.0, 255.0) / 255.0;
@@ -184,7 +192,7 @@ std::tuple<double, double, double> RGBToHSV(int red, int green, int blue)
     return { h, s, v };
 }
 
-std::string HandleColor(AppState *appState, const std::string &color)
+std::string OutputColor(AppState *appState, const std::string &color)
 {
     if (appState->cli.GetInfo().output == "terminal")
         return color;
@@ -201,32 +209,24 @@ std::string HandleColor(AppState *appState, const std::string &color)
     return "Selected color copied to clipboard.";
 }
 
-std::string GetColor(AppState *appState, SDL_Surface *surface, int mouseX, int mouseY)
+std::string FormatColor(AppState *appState, const SDL_Color &color)
 {
-    SDL_Color color;
-
-    const SDL_PixelFormatDetails *pixelFormatDetails = SDL_GetPixelFormatDetails(surface->format);
-
-    uint32_t pixel = GetPixel(surface, mouseX, mouseY);
-
-    SDL_GetRGB(pixel, pixelFormatDetails, nullptr, &color.r, &color.g, &color.b);
-
-    pixel = color.r << 16 | color.g << 8 | color.b;
+    uint32_t pixel = color.r << 16 | color.g << 8 | color.b;
 
     if (appState->cli.GetInfo().format == "hex")
     {
         std::string colorString = std::format("#{:06X}", pixel);
-        return HandleColor(appState, colorString);
+        return OutputColor(appState, colorString);
     }
     else if (appState->cli.GetInfo().format == "lhex")
     {
         std::string colorString = std::format("#{:06x}", pixel);
-        return HandleColor(appState, colorString);
+        return OutputColor(appState, colorString);
     }
     else if (appState->cli.GetInfo().format == "rgb")
     {
         std::string colorString = std::format("rgb({}, {}, {})", color.r, color.g, color.b);
-        return HandleColor(appState, colorString);
+        return OutputColor(appState, colorString);
     }
     else if (appState->cli.GetInfo().format == "hsl")
     {
@@ -237,7 +237,7 @@ std::string GetColor(AppState *appState, SDL_Surface *surface, int mouseX, int m
                                               std::get<1>(hsl) * 100.0,
                                               std::get<2>(hsl) * 100.0);
 
-        return HandleColor(appState, colorString);
+        return OutputColor(appState, colorString);
     }
     else if (appState->cli.GetInfo().format == "hsv")
     {
@@ -248,7 +248,7 @@ std::string GetColor(AppState *appState, SDL_Surface *surface, int mouseX, int m
                                               std::get<1>(hsv) * 100.0,
                                               std::get<2>(hsv) * 100.0);
 
-        return HandleColor(appState, colorString);
+        return OutputColor(appState, colorString);
     }
     else if (appState->cli.GetInfo().format == "all")
     {
@@ -265,7 +265,7 @@ hsv({7:.1f}, {8:.1f}, {9:.1f}))",
                                   std::get<0>(hsl), std::get<1>(hsl) * 100, std::get<2>(hsl) * 100,
                                   std::get<0>(hsv), std::get<1>(hsv) * 100, std::get<2>(hsv) * 100);
 
-        return HandleColor(appState, colorString);
+        return OutputColor(appState, colorString);
     }
 
     return "Failed to retrieve color!";
@@ -291,6 +291,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+
+        return SDL_APP_FAILURE;
+    }
+
+    if (!TTF_Init())
+    {
+        SDL_Log("Couldn't initialize SDL_ttf: %s", SDL_GetError());
 
         return SDL_APP_FAILURE;
     }
@@ -339,24 +346,24 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
                 default:
                     break;
             }
-
             break;
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             switch (event->button.button)
             {
                 case 1:
                 {
-                    std::cout << GetColor(appState,
+                    SDL_Color color = GetColor(appState,
                                           appState->screenshotPixels,
                                           static_cast<int>(appState->mouseX),
-                                          static_cast<int>(appState->mouseY)) << '\n';
+                                          static_cast<int>(appState->mouseY));
+
+                    std::cout << FormatColor(appState, color) << '\n';
 
                     return SDL_APP_SUCCESS;
                 }
                 default:
                     break;
             }
-
             break;
         default:
             break;
@@ -371,37 +378,31 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     SDL_GetMouseState(&appState->mouseX, &appState->mouseY);
 
+    appState->colorView.x = appState->mouseX + 10.0f;
+    appState->colorView.y = appState->mouseY + 10.0f;
+    appState->colorViewBorder.x = appState->colorView.x - 2.5f;
+    appState->colorViewBorder.y = appState->colorView.y - 2.5f;
+
     SDL_SetRenderDrawColor(appState->renderer, 0, 0, 0, 255);
 
     SDL_RenderClear(appState->renderer);
 
     SDL_RenderTexture(appState->renderer, appState->screenshot, nullptr, nullptr);
 
-    appState->colorView.x = appState->mouseX + 10.0f;
-    appState->colorView.y = appState->mouseY + 10.0f;
-    appState->colorViewBorder.x = appState->colorView.x - 2.5f;
-    appState->colorViewBorder.y = appState->colorView.y - 2.5f;
+    if (!appState->screenshotPixels)
+        appState->screenshotPixels = SDL_RenderReadPixels(appState->renderer, nullptr);
 
-    if (appState->color.r >= 128 || appState->color.g >= 128 || appState->color.b >= 128)
+    SDL_Color color = GetColor(appState, appState->screenshotPixels, appState->mouseX, appState->mouseY);
+
+    if (color.r >= 128 || color.g >= 128 || color.b >= 128)
         SDL_SetRenderDrawColor(appState->renderer, 0, 0, 0, 255);
-    else if (appState->color.r <= 127 || appState->color.g <= 127 || appState->color.b <= 127)
+    else if (color.r <= 127 || color.g <= 127 || color.b <= 127)
         SDL_SetRenderDrawColor(appState->renderer, 255, 255, 255, 255);
 
     SDL_RenderFillRect(appState->renderer, &appState->colorViewBorder);
 
-    if (!appState->screenshotPixels)
-    {
-        appState->screenshotPixels = SDL_RenderReadPixels(appState->renderer, nullptr);
-        appState->pixelFormatDetails = SDL_GetPixelFormatDetails(appState->screenshotPixels->format);
-    }
-
-    uint32_t pixel = GetPixel(appState->screenshotPixels, appState->mouseX, appState->mouseY);
-
-    SDL_GetRGB(pixel, appState->pixelFormatDetails, nullptr,
-               &appState->color.r, &appState->color.g, &appState->color.b);
-
     SDL_SetRenderDrawColor(appState->renderer,
-                           appState->color.r, appState->color.g, appState->color.b, appState->color.a);
+                           color.r, color.g, color.b, color.a);
 
     SDL_RenderFillRect(appState->renderer, &appState->colorView);
 
@@ -412,6 +413,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
+    TTF_Quit();
+
     if (appstate)
     {
         AppState *appState = static_cast<AppState*>(appstate);
