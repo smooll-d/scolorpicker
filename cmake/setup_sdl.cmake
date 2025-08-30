@@ -38,13 +38,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SDL_image)
 
-set(SDLTTF_SAMPLES OFF)
-
-FetchContent_Declare(
-    SDL_ttf
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-    GIT_TAG        release-3.2.2
-    GIT_SHALLOW    ON
-    GIT_PROGRESS   ON
-)
-FetchContent_MakeAvailable(SDL_ttf)
+# Disabled for this project
+# set(SDLTTF_SAMPLES OFF)
+#
+# FetchContent_Declare(
+#     SDL_ttf
+#     GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+#     GIT_TAG        release-3.2.2
+#     GIT_SHALLOW    ON
+#     GIT_PROGRESS   ON
+# )
+# FetchContent_MakeAvailable(SDL_ttf)

@@ -24,7 +24,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(FETCHCONTENT_QUIET OFF)
 
 include(FetchContent)
-# TODO: Let user choose between Xlib or XCB when option SCP_ENABLE_LINUX is used
 include(cmake/check_options.cmake)
 include(cmake/setup_sdl.cmake)
 
@@ -53,4 +52,4 @@ target_compile_options(${CMAKE_PROJECT_NAME} BEFORE PUBLIC -Wall)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src" ${_SCP_SDBUSCPP_INCLUDE_DIRECTORY})
 
-target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
