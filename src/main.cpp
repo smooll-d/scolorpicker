@@ -1,25 +1,20 @@
 #include "CLI/CLI.hpp"
-#include "SDL3/SDL_pixels.h"
 #include "Screenshooter/Screenshooter.hpp"
+#include "Utils/Utils.hpp"
 #include "config.hpp"
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <SDL3_ttf/SDL_ttf.h>
 
 #include <format>
 #include <iostream>
 #include <filesystem>
-#include <algorithm>
 #include <cmath>
-#include <cstdint>
-#include <cstdlib>
 #include <tuple>
 #include <unistd.h>
 
-// TODO: add clipboard support
-// TODO: add color preview (rect and text)
+// TODO: cleanup
 // TODO: make a manpage
 // TODO: README.md rewrite
 // TODO: update AUR package
@@ -198,11 +193,63 @@ std::string OutputColor(AppState *appState, const std::string &color)
         return color;
     else if (appState->cli.GetInfo().output == "clipboard")
     {
-        if (!SDL_SetClipboardText(color.c_str()))
+        int fd[2];
+
+        if (pipe(fd) == -1)
         {
-            SDL_Log("Failed to copy color to clipboard: %s", SDL_GetError());
+            perror("pipe");
 
             SDL_Quit();
+        }
+
+        pid_t childPID = fork();
+
+        if (childPID == -1)
+        {
+            perror("fork");
+
+            SDL_Quit();
+        }
+        else if (childPID == 0)
+        {
+            if (dup2(fd[0], STDIN_FILENO) == -1)
+            {
+                perror("dup2");
+
+                SDL_Quit();
+            }
+
+            close(fd[0]);
+            close(fd[1]);
+
+            const char *argv[3] {};
+
+            if (scp::Utils::CheckSession() == 0)
+            {
+                argv[0] = "xsel";
+                argv[1] = "-b";
+                argv[2] = nullptr;
+            }
+            else if (scp::Utils::CheckSession() == 1)
+            {
+                argv[0] = "wl-copy";
+                argv[1] = nullptr;
+            }
+
+            execvp(argv[0], const_cast<char *const *>(argv));
+        }
+        else
+        {
+            close(fd[0]);
+
+            if (write(fd[1], color.c_str(), color.length()) == -1)
+            {
+                perror("write");
+
+                SDL_Quit();
+            }
+
+            close(fd[1]);
         }
     }
 
@@ -291,13 +338,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
-
-        return SDL_APP_FAILURE;
-    }
-
-    if (!TTF_Init())
-    {
-        SDL_Log("Couldn't initialize SDL_ttf: %s", SDL_GetError());
 
         return SDL_APP_FAILURE;
     }
@@ -413,8 +453,6 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    TTF_Quit();
-
     if (appstate)
     {
         AppState *appState = static_cast<AppState*>(appstate);
