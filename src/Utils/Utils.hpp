@@ -14,6 +14,8 @@ namespace scp
         void TestSDL(SDL_Renderer *renderer);
 
         unsigned int CountTrailingZeroes(int number);
+
+        int CheckSession();
     } // namespace Utils
 } // namespace scp
 

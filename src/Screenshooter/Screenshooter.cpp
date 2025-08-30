@@ -1,4 +1,5 @@
 #include "Screenshooter.hpp"
+#include "Utils/Utils.hpp"
 #include "config.hpp"
 
 #ifdef SCP_ENABLE_X11
@@ -24,11 +25,9 @@ namespace scp
 #elif defined SCP_ENABLE_WAYLAND
         return std::make_unique<Screenshooter_Wayland>();
 #elif defined SCP_ENABLE_LINUX
-        std::string sessionType = std::getenv("XDG_SESSION_TYPE");
-
-        if (std::getenv("DISPLAY") && sessionType.compare("x11") == 0)
+        if (Utils::CheckSession() == 0)
             return std::make_unique<Screenshooter_X11>();
-        else if (std::getenv("WAYLAND_DISPLAY") && sessionType.compare("wayland") == 0)
+        else if (Utils::CheckSession() == 1)
             return std::make_unique<Screenshooter_Wayland>();
 #endif
 

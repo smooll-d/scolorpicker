@@ -47,5 +47,17 @@ namespace scp
 
             return bits;
         }
+
+        int CheckSession()
+        {
+            std::string session = std::getenv("XDG_SESSION_TYPE");
+
+            if (std::getenv("DISPLAY") && session == "x11")
+                return 0;
+            else if (std::getenv("WAYLAND_DISPLAY") && session == "wayland")
+                return 1;
+
+            return -1;
+        }
     } // namespace Utils
 } // namespace scp
