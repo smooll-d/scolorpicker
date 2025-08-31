@@ -15,7 +15,6 @@
 #include <unistd.h>
 
 // TODO: cleanup
-// TODO: make a manpage
 // TODO: README.md rewrite
 // TODO: update AUR package
 // TODO: create new AUR package for legacy (C) version
