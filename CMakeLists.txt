@@ -15,7 +15,7 @@ option(SCP_ENABLE_AUTO "Enable automatically detected backend" ON)
 option(SCP_FORCE_XLIB "Force Xlib backend. Used with SCP_ENABLE_LINUX" OFF)
 option(SCP_FORCE_XCB "Force XCB backend. Used with SCP_ENABLE_LINUX" OFF)
 
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -23,28 +23,22 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(FETCHCONTENT_QUIET OFF)
 
+set(SCP_DATA_DIRECTORY_DEV "${CMAKE_SOURCE_DIR}/data")
+set(SCP_DATA_DIRECTORY_REL "/usr/share/scolorpicker")
+
 include(FetchContent)
 include(cmake/check_options.cmake)
 include(cmake/setup_sdl.cmake)
 
 configure_file("${CMAKE_SOURCE_DIR}/cmake/config.hpp.in" "${CMAKE_SOURCE_DIR}/src/config.hpp")
 
-message(STATUS "")
-message(STATUS "scolorpicker was configured with the following options:")
-message(STATUS "  SCP_ENABLE_X11    : ${SCP_ENABLE_X11}")
-message(STATUS "  SCP_ENABLE_XLIB   : ${SCP_ENABLE_XLIB}")
-message(STATUS "  SCP_ENABLE_XCB    : ${SCP_ENABLE_XCB}")
-message(STATUS "  SCP_ENABLE_WAYLAND: ${SCP_ENABLE_WAYLAND}")
-message(STATUS "  SCP_ENABLE_LINUX  : ${SCP_ENABLE_LINUX}")
-message(STATUS "  SCP_ENABLE_AUTO   : ${SCP_ENABLE_AUTO}")
-message(STATUS "")
-
 file(GLOB_RECURSE cli_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/CLI/*.cpp")
 file(GLOB_RECURSE utils_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utils/*.cpp")
+file(GLOB_RECURSE color_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Color/*.cpp")
 
 set(exe_src "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
-list(APPEND exe_src ${cli_src} ${utils_src} ${screenshot_src})
+list(APPEND exe_src ${cli_src} ${utils_src} ${color_src} ${screenshot_src})
 
 add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 
