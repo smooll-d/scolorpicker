@@ -6,6 +6,9 @@
 #define SCP_VERSION_PATCH "@scolorpicker_VERSION_PATCH@"
 #define SCP_VERSION_TWEAK "@scolorpicker_VERSION_TWEAK@"
 
+#define SCP_DATA_DIRECTORY_DEV "@SCP_DATA_DIRECTORY_DEV@"
+#define SCP_DATA_DIRECTORY_REL "@SCP_DATA_DIRECTORY_REL@"
+
 #cmakedefine SCP_ENABLE_X11
 #cmakedefine SCP_ENABLE_XLIB
 #cmakedefine SCP_ENABLE_XCB
