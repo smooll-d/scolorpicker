@@ -14,6 +14,8 @@
 #include <unistd.h>
 
 // TODO: README.md rewrite
+// TODO: Add appimage
+// TODO: flatpak package (?)
 // TODO: update AUR package
 // TODO: create new AUR package for legacy (C) version
 // TODO: merge scp2 into master
