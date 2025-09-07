@@ -1,107 +1,165 @@
+<p align="center">
+    <img src="data/logo/logo_128x128.png" alt="scolorpicker Logo">
+</p>
+
 # scolorpicker
-scolorpicker is a color picker application written in C using nothing but Xlib.
+scolorpicker (`smooll's Color Picker`) is a color picker application available on Linux for both X11 and Wayland!
 
-This is why scolorpicker can be installed anywhere an X.Org server is installed, is very lightweight with the executable clocking in at just 27k and has very little
-dependencies.
-
-## Installation
-
-### Dependencies
-If you want to manually build scolorpicker or download it from [Releases](https://www.github.com/reallySmooll/scolorpicker/releases), you need to install some dependencies:
-
-**NOTE: These package names are for Arch Linux. You will need to get the names of these packages for other distros yourself.**
-
-- glibc (C standard library, you almost certainly don't need to install it if you've installed development packages for your distro, e.g. base-devel for Arch Linux)
-- libx11 (scolorpicker needs this library to work)
-- xsel (scolorpicker needs this to make clipboard saving, there are plans to remove this dependency and save to clipboard without any external libraries)
-- libxext (scolorpicker needs this library to make the window corners round, if scolorpicker for some reason cannot enable the Shapes extension, the window will default to straight corners)
-
----
-
-There are three ways of installing scolorpicker:
-
-- Using an AUR wrapper (e.g. `yay` or `paru`) **RECOMMENDED**
-
-    Using `yay`:
-    ```bash
-    $ yay -S scolorpicker
-    ```
-
-    Using `paru`:
-    ```bash
-    $ paru -S scolorpicker
-    ```
-
-- Using the executable from [Releases](https://www.github.com/reallySmooll/scolorpicker/releases)
-
-    First, go to the latest release of scolorpicker (in this case it's `v1.0.0`):
-
-    ![releases](assets/releases.png)
-
-    Next, go download the `scolorpicker` executable:
-
-    ![releases_download](assets/releases_download.png)
-
-    After you download it, you can use it by executing it in the command line:
-    ```bash
-    $ directory/to/where/you/downloaded/scolorpicker
-    ```
-
-    If you'd like to have it in you `PATH` and use it without moving into the directory where you have the executable you can move (or copy) it to `/usr/bin` for example:
-    ```bash
-    $ sudo mv directory/to/where/you/downloaded/scolorpicker /usr/bin
-    # or copy it
-    $ sudo cp directory/to/where/you/downloaded/scolorpicker /usr/bin
-    ```
-
-    And then wherever you are, you can do:
-    ```bash
-    $ scolorpicker
-    ```
-
-- Building if from source
-
-    First, clone the repository and cd into the directory:
-    ```bash
-    $ git clone https://github.com/reallySmooll/scolorpicker.git
-    $ cd scolorpicker/
-    ```
-
-    Next, build and install scolorpicker:
-    ```bash
-    $ cmake -DINSTALL_SYSTEM_WIDE=YES -S . -B build
-    $ cd build/
-    $ cmake --build .
-    $ sudo cmake --install .
-    ```
-
-    And that's it! `cmake` will build the application automatically and copy the executable into the `/usr/bin/` directory so you can use it like any other command without having to cd into the directory and running it from there!
-
-## Usage
-Usage is pretty straight-forward, you start the application and click on the pixel you want to get the color of and it will be copied to your clipboard.
-
-Which means that if everything works out, scolorpicker should output nothing to the terminal.
-
-But if you'd like more from the program, in the terminal type:
-```bash
-$ scolorpicker --help # or -h
-```
-
-A help menu will pop up with all options explained.
+## Table of Contents
+* [Features](#features)
+    * [Completed](#completed)
+    * [Planned](#planned)
+* [Installation](#installation)
+    * [Dependencies](#dependencies)
+        * [X11](#x11)
+        * [Wayland](#wayland)
+    * [AUR](#aur)
+        * [yay](#yay)
+        * [paru](#paru)
+    * [Manual (Building from Source)](#manual-building-from-source)
+        * [Cloning](#cloning)
+        * [Legacy Version](#legacy-version)
+        * [Configuration](#configuration)
+        * [Building](#building)
+* [Usage](#usage)
+* [Contributing](#contributing)
+    * [Donation](#donation)
+    * [Reporting an Issue](#reporting-an-issue)
 
 ## Features
-Here's a list of features already implemented and ones I would like to implement in the (near?) future:
+Here's a list of features both completed and planned marked by versions which they came in.
 
-- [X] Small window displaying the color of the current pixel (v1.0.0)
-- [X] Color code in hexadecimal (v1.0.0)
-- [X] Color output to clipboard using `xclip` (v1.0.0) **NOTE: As of v1.2.0 `xclip` is no longer used in favor of `xsel` to fix a bug**
-- [X] Color code output in different modes (RGB, HSV, HSL, etc.) (v1.1.0)
+### Completed
+* color preview of the current hovered over pixel (v1.0.0)
+* color formats:
+    * hex (v1.0.0)
+    * lhex (v2.0.0)
+    * rgb (v1.1.0)
+    * hsl (v2.0.0)
+    * hsv (v2.0.0)
+    * all (v2.0.0)
+* color outputs:
+    * terminal (v1.1.0)
+    * clipboard (v1.0.0)
 
-    Available modes:
-    - `hex` - Hexadecimal
-    - `rgb` - Red, Green, Blue
+### Planned
+* rounded color preview borders
+* saving to clipboard manually instead of using external programs
 
-- [X] Ability to choose to output the color code to the terminal instead of the clipboard (v1.1.0)
-- [X] Rounded window corners (v1.2.0)
-- [ ] Saving to clipboard without the use of ~~`xclip`~~ `xsel`
-- [ ] System tray so you don't have to enter a command in the terminal to get the color of a pixel (which, I'll admit is pretty dumb)
+## Installation
+scolorpicker has a couple installation methods with more (like a flatpak package) planned.
+
+### Dependencies
+* SDL3 (*)
+* SDL3_image (*)
+
+#### X11
+* Xlib or xcb (for screenshots)
+* xcb-image (only if using xcb)
+
+#### Wayland
+* sdbus-c++ (for screenshots) (*)
+* [desktop portal](https://wiki.archlinux.org/title/XDG_Desktop_Portal) which supplies [Screenshot](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Screenshot.html) + its dependencies (e.g. `xdg-desktop-portal-wlr` + grim)
+
+(*) - if installing through the AUR or building manually, these are optional.
+
+### AUR
+If using Arch Linux, you can very simply install scolorpicker from the AUR (Arch User Repository) using an AUR helper (e.g. [yay](https://github.com/Jguer/yay) or [paru](https://github.com/Morganamilo/paru/)).
+
+#### yay
+```bash
+$ yay -S scolorpicker
+```
+
+#### paru
+```bash
+$ paru -S scolorpicker
+```
+
+### Manual (Building from Source)
+If you cannot use any of the above options for installation, you can always build manually, and thanks to the way scolorpicker is set up, you need only three commands to clone, build and install your very own version!
+
+#### Cloning
+When cloning the repo, be sure to clone a specific tag and not the master branch. This will ensure that your build is stable.
+
+```bash
+git clone --depth=1 --branch=v2.0.0 https://github.com/smooll-d/scolorpicker.git
+```
+
+##### Legacy Version
+`v2.0.0` marks the complete, from the ground up rewrite of scolorpicker in C++ instead of C and SDL3 to handle everything other than screenshots.
+
+For those that use X11 only and don't want to install so many dependencies, there is a "backup" of the first version on the `legacy` branch which can be cloned like this:
+
+```bash
+git clone --depth=1 --branch=legacy https://github.com/smooll-d/scolorpicker.git
+```
+
+#### Configuration
+scolorpicker comes with some options you can enable to configure the platform for which you're building:
+
+| Option                 | Description                                                  |
+|----------------------- | -------------------------------------------------------------|
+| SCP_ENABLE_X11         | Build using X11 backend                                      |
+| SCP_ENABLE_XLIB        | Use Xlib when building for X11                               |
+| SCP_ENABLE_XCB         | Use XCB when building for X11                                |
+| SCP_ENABLE_WAYLAND     | Build using Wayland backend                                  |
+| SCP_ENABLE_LINUX       | Build for both X11 and Wayland                               |
+| SCP_ENABLE_AUTO        | Detect backend automatically **[This is the default]**       |
+| SCP_FORCE_XLIB         | Force Xlib when building for X11                             |
+| SCP_FORCE_XCB          | Force XCB when building for X11                              |
+| SCP_BUILD_DEPENDENCIES | Download and build dependencies instead of using system ones |
+
+> [!NOTE]
+> SCP_FORCE_XLIB/XCB are really only for building with SCP_ENABLE_LINUX.
+
+If you don't know what to do, use this:
+```bash
+cmake -S . -B build -DCMAKE_PREFIX_INSTALL=/usr
+```
+
+It will detect what your system is automatically.
+
+Remove `-DCMAKE_PREFIX_INSTALL=/usr` if you do not wish to install scolorpicker system-wide.
+
+#### Building
+```bash
+cmake --build build -j$(nproc)
+```
+
+This will build the project using as many jobs as there are cores on your processor. It'll take much less time to build.
+
+If you used `-DCMAKE_PREFIX_INSTALL=/usr`, you can install scolorpicker sysmtem-wide:
+```bash
+sudo cmake --install build
+```
+
+## Usage
+The most basic usage of scolorpicker is:
+
+```bash
+scolorpicker
+```
+
+By default, it'll print the color in uppercase hex to the terminal.
+
+If you'd like to read up about what more's there to do, you can either:
+```bash
+scolorpicker --help
+```
+
+or:
+```bash
+man scolorpicker
+```
+
+Have fun!
+
+## Contributing
+If you like scolorpicker and would like to contribute in some way, you can do it in two ways.
+
+### Donation
+The best way to donate is to my [PayPal](https://paypal.me/smoolld), but you can also donate to my [Ko-fi](https://ko-fi.com/smooll). Don't worry, there are no memberships.
+
+### Reporting an Issue
+If you've found a bug or would like to submit a feature request for a new output method or format, you can do it in the [Issues](https://github.com/smooll-d/scolorpicker/issues) tab.
