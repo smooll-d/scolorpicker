@@ -1,6 +1,6 @@
 find_package(SDL3 CONFIG)
 
-if (NOT TARGET SDL3::SDL3)
+if (NOT TARGET SDL3::SDL3 OR SCP_BUILD_DEPENDENCIES)
     set(SDL_TESTS OFF)
     set(SDL_EXAMPLES OFF)
     set(SDL_SHARED ON)
@@ -23,7 +23,7 @@ endif()
 
 find_package(SDL3_image CONFIG)
 
-if (NOT TARGET SDL3_image::SDL3_image)
+if (NOT TARGET SDL3_image::SDL3_image OR SCP_BUILD_DEPENDENCIES)
     set(SDLIMAGE_SAMPLES OFF)
 
     FetchContent_Declare(
@@ -39,7 +39,7 @@ endif()
 # Disabled for this project
 # find_package(SDL3_mixer CONFIG)
 
-# if (NOT TARGET SDL3_mixer::SDL3_mixer)
+# if (NOT TARGET SDL3_mixer::SDL3_mixer OR SCP_BUILD_DEPENDENCIES)
     # FetchContent_Declare(
     #     SDL_mixer
     #     GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
@@ -53,7 +53,7 @@ endif()
 # Disabled for this project
 # find_package(SDL3_ttf CONFIG)
 
-# if (NOT TARGET SDL3_ttf::SDL3_ttf)
+# if (NOT TARGET SDL3_ttf::SDL3_ttf OR SCP_BUILD_DEPENDENCIES)
     # set(SDLTTF_SAMPLES OFF)
     #
     # FetchContent_Declare(
