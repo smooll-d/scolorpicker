@@ -1,6 +1,6 @@
 find_package(sdbus-c++ CONFIG)
 
-if (NOT TARGET SDBusCpp::sdbus-c++)
+if (NOT TARGET SDBusCpp::sdbus-c++ OR SCP_BUILD_DEPENDENCIES)
     set(SCP_SDBUSCPP sdbus-c++ CACHE INTERNAL "SCP_SDBUSCPP")
     set(SDBUSCPP_INSTALL OFF)
 
