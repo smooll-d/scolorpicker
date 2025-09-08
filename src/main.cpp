@@ -15,7 +15,6 @@
 
 // TODO: Add appimage
 // TODO: flatpak package (?)
-// TODO: create new AUR package for legacy (C) version
 // TODO: profit
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
