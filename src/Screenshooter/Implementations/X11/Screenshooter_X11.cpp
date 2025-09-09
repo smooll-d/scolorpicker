@@ -1,6 +1,5 @@
 #include "Screenshooter_X11.hpp"
 #include "Utils/Utils.hpp"
-#include <bit>
 
 #ifdef SCP_ENABLE_XLIB
 #include <X11/X.h>
@@ -19,6 +18,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <bit>
 
 namespace scp
 {
