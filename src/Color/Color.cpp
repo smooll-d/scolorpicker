@@ -3,7 +3,7 @@
 
 #include <SDL3/SDL_init.h>
 
-#include <math.h>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
