@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <unistd.h>
 
+// TODO: Add localization
 // TODO: Add appimage
 // TODO: flatpak package (?)
 // TODO: profit
