@@ -98,20 +98,18 @@ git clone --depth=1 --branch=legacy https://github.com/smooll-d/scolorpicker.git
 #### Configuration
 scolorpicker comes with some options you can enable to configure the platform for which you're building:
 
-| Option                 | Description                                                  |
-|----------------------- | -------------------------------------------------------------|
-| SCP_ENABLE_X11         | Build using X11 backend                                      |
-| SCP_ENABLE_XLIB        | Use Xlib when building for X11                               |
-| SCP_ENABLE_XCB         | Use XCB when building for X11                                |
-| SCP_ENABLE_WAYLAND     | Build using Wayland backend                                  |
-| SCP_ENABLE_LINUX       | Build for both X11 and Wayland                               |
-| SCP_ENABLE_AUTO        | Detect backend automatically **[This is the default]**       |
-| SCP_FORCE_XLIB         | Force Xlib when building for X11                             |
-| SCP_FORCE_XCB          | Force XCB when building for X11                              |
-| SCP_BUILD_DEPENDENCIES | Download and build dependencies instead of using system ones |
-
-> [!NOTE]
-> SCP_FORCE_XLIB/XCB are really only for building with SCP_ENABLE_LINUX.
+| Option                  | Description                                                   |
+|------------------------ | --------------------------------------------------------------|
+| SCP_ENABLE_X11          | Build using X11 backend                                       |
+| SCP_ENABLE_XLIB         | Use Xlib when building for X11                                |
+| SCP_ENABLE_XCB          | Use XCB when building for X11                                 |
+| SCP_ENABLE_WAYLAND      | Build using Wayland backend                                   |
+| SCP_ENABLE_LINUX        | Build for both X11 and Wayland                                |
+| SCP_ENABLE_AUTO         | Detect backend automatically **[This is the default]**        |
+| SCP_FORCE_XLIB          | Force Xlib when building for X11 (used with SCP_ENABLE_LINUX) |
+| SCP_FORCE_XCB           | Force XCB when building for X11 (used with SCP_ENABLE_LINUX)  |
+| SCP_BUILD_DEPENDENCIES  | Download and build dependencies instead of using system ones  |
+| SCP_BUILD_DOCUMENTATION | Compress man pages and install if necessary                   |
 
 If you don't know what to do, use this:
 ```bash
@@ -129,7 +127,13 @@ cmake --build build -j$(nproc)
 
 This will build the project using as many jobs as there are cores on your processor. It'll take much less time to build.
 
-If you used `-DCMAKE_PREFIX_INSTALL=/usr`, you can install scolorpicker sysmtem-wide:
+> [!TIP]
+> If you used `SCP_BUILD_DOCUMENTATION`, you can generate ready-to-install man pages after building for the first time:
+> ```bash
+> cmake --build build --target dist
+> ```
+
+If you used `-DCMAKE_PREFIX_INSTALL=/usr`, you can install scolorpicker system-wide:
 ```bash
 sudo cmake --install build
 ```
