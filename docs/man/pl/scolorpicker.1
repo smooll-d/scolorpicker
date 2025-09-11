@@ -1,0 +1,60 @@
+.TH SCOLORPICKER 1 v2.0.0 scolorpicker
+.SH NAZWA
+scolorpicker \- Wybornik Kolorów smooll'a
+.SH SKŁADNIA
+.B scolorpicker
+[\fIOPCJE\fR]
+.SH OPIS
+.B scolorpicker
+to narzędzie używane do wyświetlania wartości jednego wybranego piksela na ekranie.
+.PP
+Gdy uruchomiony, robi zdjęcie ekranu i wyświetla je w oknie, z którego użytkownik może wybrać jakikolwiek piksel i
+uzyskać wartość jego koloru w wybranym formacie wyświetloną w terminalu lub skopiowaną do schowka.
+.SH OPCJE
+.TP
+.BR \-h ", " \-\-help
+Wyświetl pomocną wiadomość opisującą użytkowanie programu i opcje oraz wybór formatu i wyjścia.
+.TP
+.BR \-v ", " \-\-version
+Wyświetl wiadomość z wersją scolorpicker'a i inne informacje.
+.TP
+.BR \-f ", " \-\-format " " \fIFORMAT\fR
+Wyświetl kolor w jednym z dostępnych formatów.
+.TP
+.BR \-o ", " \-\-output " " \fIOUTPUT\fR
+Wyślij kolor do jednego z wybranych wyjść.
+.SH FORMAT
+.TP
+.BR hex
+Szesnastkowy (e.g. #FF0000)
+\fBTo jest domyślna opcja.\fR
+.TP
+.BR lhex
+Szesnastkowy małymi literami (e.g. #ff0000)
+.TP
+.BR rgb
+Czerwony Zielony Niebieski (e.g. rgb(255, 0, 0))
+.TP
+.BR hsl
+Barwa Nasycenie Jasność (e.g. hsl(0, 100, 50))
+.TP
+.BR hsv
+Barwa Nasycenie Wartość (e.g. hsv(0, 100, 100))
+.TP
+.BR all
+Wszystkie formaty oddzielone nowymi liniami.
+.SH WYJŚCIA
+.TP
+.BR terminal
+Wyświetla wybrany kolor w terminalu.
+\fBTo jest domyślna opcja.\fR
+.TP
+.BR clipboard
+Kopiuje wybrany kolor do schowka.
+.SH ZGŁASZANIE BŁĘDÓW
+Zanim zgłosisz jakikolwiek błąd, proszę zobacz czy nie został on już zgłoszony na
+\fIhttps://github.com/smooll-d/scolorpicker/issues\fR. Jeżeli nie, możesz zgłosić błąd tam.
+.PP
+Każdy błąd krytyczny powinien zostać zgłoszony na adres \fIjakubskowron676@gmail.com\fR.
+.SH PRAWA AUTORSKIE
+Copyright (c) 2023-2025, Jakub Skowron.
