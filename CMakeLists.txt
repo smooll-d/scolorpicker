@@ -15,6 +15,7 @@ option(SCP_ENABLE_AUTO "Enable automatically detected backend" ON)
 option(SCP_FORCE_XLIB "Force Xlib backend. Used with SCP_ENABLE_LINUX" OFF)
 option(SCP_FORCE_XCB "Force XCB backend. Used with SCP_ENABLE_LINUX" OFF)
 option(SCP_BUILD_DEPENDENCIES "Force download and build of dependencies regardless of system availability" OFF)
+option(SCP_BUILD_DOCUMENTATION "Compress documentation and install it if desired" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,6 +23,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(FETCHCONTENT_QUIET OFF)
+
+set(languages "man1" "pl")
 
 include(GNUInstallDirs)
 
@@ -50,19 +53,23 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/sr
 
 target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
 
+# Install executable
 install(TARGETS "${CMAKE_PROJECT_NAME}"
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
+# Install all cursor files
 file(GLOB cursors "${CMAKE_SOURCE_DIR}/data/cursor/cursor_*.bmp")
 install(FILES ${cursors}
     DESTINATION "${CMAKE_INSTALL_DATADIR}/scolorpicker/cursor"
 )
 
+# Install desktop file
 install(FILES "${CMAKE_SOURCE_DIR}/data/desktop/scolorpicker.desktop"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
 )
 
+# Install icon files
 install(FILES "${CMAKE_SOURCE_DIR}/data/logo/logo_16x16.png"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/16x16/apps"
     RENAME "scolorpicker.png"
@@ -80,6 +87,6 @@ install(FILES "${CMAKE_SOURCE_DIR}/data/logo/logo_128x128.png"
     RENAME "scolorpicker.png"
 )
 
-install(FILES "${CMAKE_SOURCE_DIR}/docs/scolorpicker.1"
-    DESTINATION "${CMAKE_INSTALL_MANDIR}"
-)
+if(SCP_BUILD_DOCUMENTATION)
+    include(cmake/localize.cmake)
+endif()
