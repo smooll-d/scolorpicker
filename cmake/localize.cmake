@@ -9,13 +9,17 @@ foreach(language ${languages})
     )
 
     list(APPEND manpages "${CMAKE_SOURCE_DIR}/docs/man/dist/${language}/scolorpicker.1.gz")
-
-    install(FILES "${CMAKE_SOURCE_DIR}/docs/man/dist/${language}/scolorpicker.1.gz"
-        DESTINATION "${CMAKE_INSTALL_MANDIR}/${language}"
-    )
 endforeach()
 
 add_custom_target(dist
     DEPENDS ${manpages}
     VERBATIM
+)
+
+install(FILES "${CMAKE_SOURCE_DIR}/docs/man/dist/en/scolorpicker.1.gz"
+    DESTINATION "${CMAKE_INSTALL_MANDIR}/man1"
+)
+
+install(FILES "${CMAKE_SOURCE_DIR}/docs/man/dist/pl/scolorpicker.1.gz"
+    DESTINATION "${CMAKE_INSTALL_MANDIR}/pl/man1"
 )

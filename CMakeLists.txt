@@ -24,7 +24,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(FETCHCONTENT_QUIET OFF)
 
-set(languages "man1" "pl")
+set(languages "en" "pl")
 
 include(GNUInstallDirs)
 
