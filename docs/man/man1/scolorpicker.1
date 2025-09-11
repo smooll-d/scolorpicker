@@ -1,0 +1,60 @@
+.TH SCOLORPICKER 1 v2.0.0 scolorpicker
+.SH NAME
+scolorpicker \- smooll's Color Picker
+.SH SYNOPSIS
+.B scolorpicker
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B scolorpicker
+is a tool used to display the color value of any one chosen pixel currently on the display.
+.PP
+When ran, it takes a screenshot and displays it in a window from which a user can select any pixel and receive its
+color value in a selected format to either the terminal or the clipboard.
+.SH OPTIONS
+.TP
+.BR \-h ", " \-\-help
+Display a help message outlining the usage and options as well as format and output choices.
+.TP
+.BR \-v ", " \-\-version
+Display a message showing the version of scolorpicker and other information.
+.TP
+.BR \-f ", " \-\-format " " \fIFORMAT\fR
+Output the color value in one of the available formats.
+.TP
+.BR \-o ", " \-\-output " " \fIOUTPUT\fR
+Send the color value to one of the available outputs.
+.SH FORMAT
+.TP
+.BR hex
+Hexadecimal (e.g. #FF0000)
+\fBThis is the default.\fR
+.TP
+.BR lhex
+Lowercase hexadecimal (e.g. #ff0000)
+.TP
+.BR rgb
+Red Green Blue (e.g. rgb(255, 0, 0))
+.TP
+.BR hsl
+Hue Saturation Lightness (e.g. hsl(0, 100, 50))
+.TP
+.BR hsv
+Hue Saturation Value (e.g. hsv(0, 100, 100))
+.TP
+.BR all
+All formats separated by newlines.
+.SH OUTPUT
+.TP
+.BR terminal
+Prints selected color value in the terminal.
+\fBThis is the default.\fR
+.TP
+.BR clipboard
+Copies selected color value to clipboard.
+.SH BUGS
+Before reporting any bugs, please check if it hasn't been already reported at
+\fIhttps://github.com/smooll-d/scolorpicker/issues\fR. If not, you can create an issue and report it there.
+.PP
+Any critical bugs should be reported to \fIjakubskowron676@gmail.com\fR.
+.SH COPYRIGHT
+Copyright (c) 2023-2025, Jakub Skowron.
