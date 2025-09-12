@@ -20,6 +20,8 @@ namespace scp
             CLI(int argc, char *argv[]);
 
             const Info &GetInfo() { return _Info; }
+
+            std::string cwd;
         private:
             bool _FindArgument(std::string option, std::string argument);
             void _ShowHelp();

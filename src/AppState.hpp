@@ -8,13 +8,10 @@
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
 
-#include <filesystem>
 #include <format>
 
 struct AppState
 {
-    std::filesystem::path cwd;
-
     scp::CLI cli;
 
     SDL_Window *window;
@@ -40,10 +37,10 @@ struct AppState
     {
         SDL_Surface *cursorSurfaces[4]
         {
-            SDL_LoadBMP(std::format("{}/cursor/cursor_16x16.bmp", cwd.c_str()).c_str()),
-            SDL_LoadBMP(std::format("{}/cursor/cursor_32x32.bmp", cwd.c_str()).c_str()),
-            SDL_LoadBMP(std::format("{}/cursor/cursor_64x64.bmp", cwd.c_str()).c_str()),
-            SDL_LoadBMP(std::format("{}/cursor/cursor_128x128.bmp", cwd.c_str()).c_str())
+            SDL_LoadBMP(std::format("{}/cursor/cursor_16x16.bmp", cli.cwd.c_str()).c_str()),
+            SDL_LoadBMP(std::format("{}/cursor/cursor_32x32.bmp", cli.cwd.c_str()).c_str()),
+            SDL_LoadBMP(std::format("{}/cursor/cursor_64x64.bmp", cli.cwd.c_str()).c_str()),
+            SDL_LoadBMP(std::format("{}/cursor/cursor_128x128.bmp", cli.cwd.c_str()).c_str())
         };
 
         for (int i = 0; i < 4; i++)

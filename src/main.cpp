@@ -10,7 +10,6 @@
 
 #include <format>
 #include <iostream>
-#include <filesystem>
 #include <unistd.h>
 
 // TODO: Add localization
@@ -22,11 +21,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     AppState *appState = static_cast<AppState*>(SDL_calloc(1, sizeof(AppState)));
     *appstate = appState;
-
-    if (std::filesystem::exists(SCP_DATA_DIRECTORY_DEV))
-        appState->cwd = SCP_DATA_DIRECTORY_DEV;
-    else
-        appState->cwd = SCP_DATA_DIRECTORY_REL;
 
     new (&appState->cli) scp::CLI{argc, argv};
 
