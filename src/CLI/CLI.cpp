@@ -7,15 +7,25 @@
 #include <format>
 #include <iostream>
 #include <iterator>
+#include <fstream>
+#include <filesystem>
+#include <locale>
+#include <string>
 
 namespace scp
 {
     CLI::CLI(int argc, char *argv[])
-     : _ParameterCount{argc},
+     : _Info{},
+       _ParameterCount{argc},
        _Parameters{argv, argv + argc},
        _ParameterIterator{},
        _ParameterDistance{0}
     {
+        if (std::filesystem::exists(SCP_DATA_DIRECTORY_DEV))
+            this->cwd = SCP_DATA_DIRECTORY_DEV;
+        else
+            this->cwd = SCP_DATA_DIRECTORY_REL;
+
         for (const auto &parameter : this->_Parameters)
         {
             if (parameter.starts_with("--") || parameter.starts_with("-"))
@@ -84,35 +94,31 @@ namespace scp
 
     void CLI::_ShowHelp()
     {
-        std::cout << R"(scolorpicker [Options]
+        std::fstream helpfile;
 
-Options:
-    --help,    -h          Show this message and exit
-    --version, -v          Show version + other info and exit
-    --format,  -f <Format> How color value is formatted
-    --output,  -o <Output> Where formatted color value is sent to
+        std::string help = "";
 
-Format:
-    hex                    Hexadecimal (e.g. #FF0000)                   [DEFAULT]
-    lhex                   Hexadecimal in lowercase (e.g. #ff0000)
-    rgb                    Red Green Blue (e.g. rgb(255, 0, 0))
-    hsl                    Hue Saturation Lightness (e.g. hsl(0, 100, 50))
-    hsv                    Hue Saturation Value (e.g. hsv(0, 100, 100))
-    all                    All formats separated by newlines
+        if (std::locale("").name() == "pl_PL" || std::locale("").name() == "pl_PL.UTF-8")
+            // helpfile.open(std::format("{}/data/messages/en/help.txt", cwd), helpfile.binary | helpfile.in);
+            helpfile.open("data/messages/pl/help.txt", helpfile.binary | helpfile.in);
+        else
+            // helpfile.open(std::format("{}/data/messages/en/help.txt", cwd), helpfile.binary | helpfile.in);
+            helpfile.open("data/messages/en/help.txt", helpfile.binary | helpfile.in);
 
-Output:
-    terminal               Print color in specified format to terminal  [DEFAULT]
-    clipboard              Send color in specified format to clipboard)" << '\n';
+        if (!helpfile.is_open())
+            std::cout << "couldn't open file!\n";
+
+        while (std::getline(helpfile, help))
+            std::cout << help << '\n';
+
+        helpfile.close();
     }
 
     void CLI::_ShowVersion()
     {
-        std::string heart = Utils::TRed("<3", "foreground");
-
         std::cout << std::format("scolorpicker v{}.{}.{}",
                                  SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH)
                   << "\n\n";
-        std::cout << std::format("Made with {} by Jakub Skowron (@smooll-d)", heart) << '\n';
     }
 
     bool CLI::_FindArgument(std::string option, std::string argument)
