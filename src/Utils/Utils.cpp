@@ -78,7 +78,11 @@ namespace scp
             messageFile.open(std::format("data/messages/en/{}.txt", messageName), messageFile.binary | messageFile.in);
 
         if (!messageFile.is_open())
-            std::cerr << "Couldn't load message '" << messageName << "'\n";
+        {
+            std::string failedMessage = Localize("message_not_loaded");
+
+            return ReplacePlaceholder(failedMessage, messageName);
+        }
 
         while (std::getline(messageFile, line))
             message += line + '\n';
@@ -86,5 +90,13 @@ namespace scp
         messageFile.close();
 
         return message;
+    }
+
+    std::string Utils::ReplacePlaceholder(std::string placeholder, std::string_view actual)
+    {
+        auto placeholderBegin = std::find(placeholder.begin(), placeholder.end(), '<');
+        auto placeholderEnd = std::find(placeholder.begin(), placeholder.end(), '>');
+
+        return placeholder.replace(placeholderBegin, std::next(placeholderEnd), actual);
     }
 } // namespace scp
