@@ -1,8 +1,10 @@
 #include "AppState.hpp"
 #include "CLI/CLI.hpp"
 #include "Screenshooter/Screenshooter.hpp"
+#include "Utils/Utils.hpp"
 #include "config.hpp"
 #include "Color/Color.hpp"
+#include <SDL3/SDL_error.h>
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
@@ -33,7 +35,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
-        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        std::string SDLInitError = scp::Utils::Localize("main/sdl_init.txt");
+
+        SDL_Log("%s", scp::Utils::ReplacePlaceholder(SDLInitError, SDL_GetError()).c_str());
 
         return SDL_APP_FAILURE;
     }
@@ -44,7 +48,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
                                      &appState->window,
                                      &appState->renderer))
     {
-        SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
+        std::string SDLWindowRendererError = scp::Utils::Localize("main/window_renderer_creation");
+
+        SDL_Log("%s", scp::Utils::ReplacePlaceholder(SDLWindowRendererError, SDL_GetError()).c_str());
 
         return SDL_APP_FAILURE;
     }
@@ -93,7 +99,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
                                           static_cast<int>(appState->mouseX),
                                           static_cast<int>(appState->mouseY));
 
-                    std::cout << scp::Color::Format(appState, color) << '\n';
+                    std::cout << scp::Color::Format(appState, color);
 
                     return SDL_APP_SUCCESS;
                 }

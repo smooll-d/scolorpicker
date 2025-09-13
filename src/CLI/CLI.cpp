@@ -12,6 +12,8 @@
 
 namespace scp
 {
+    std::string CLI::cwd = "";
+
     CLI::CLI(int argc, char *argv[])
      : _Info{},
        _ParameterCount{argc},
@@ -60,7 +62,7 @@ namespace scp
             else if (this->_FindArgument(parameter, "all"))
                 this->_Info.format = "all";
             else
-                std::cout << Utils::Localize("unknown_format");
+                std::cout << Utils::Localize("CLI/unknown_format");
 
             return;
         }
@@ -71,13 +73,13 @@ namespace scp
             else if (this->_FindArgument(parameter, "clipboard"))
                 this->_Info.output = "clipboard";
             else
-                std::cout << Utils::Localize("unknown_output");
+                std::cout << Utils::Localize("CLI/unknown_output");
 
             return;
         }
         else
         {
-            std::string unknownParameter = Utils::Localize("unknown_parameter");
+            std::string unknownParameter = Utils::Localize("CLI/unknown_parameter");
 
             std::cerr << Utils::ReplacePlaceholder(unknownParameter, parameter);
 
@@ -87,7 +89,7 @@ namespace scp
 
     void CLI::_ShowHelp()
     {
-        std::cout << Utils::Localize("help");
+        std::cout << Utils::Localize("CLI/help");
     }
 
     void CLI::_ShowVersion()

@@ -2,7 +2,9 @@
 #define SCP_APPSTATE
 
 #include "CLI/CLI.hpp"
+#include "Utils/Utils.hpp"
 
+#include <SDL3/SDL_error.h>
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
@@ -46,20 +48,32 @@ struct AppState
         for (int i = 0; i < 4; i++)
         {
             if (!cursorSurfaces[i])
-                SDL_Log("Failed to create cursor surface: %s", SDL_GetError());
+            {
+                std::string cursorSurfaceError = scp::Utils::Localize("AppState/cursor_surface");
+
+                SDL_Log("%s", scp::Utils::ReplacePlaceholder(cursorSurfaceError, SDL_GetError()).c_str());
+            }
         }
 
         for (int i = 1; i < 4; i++)
         {
             if (!SDL_AddSurfaceAlternateImage(cursorSurfaces[0], cursorSurfaces[i]))
-                SDL_Log("Failed to add alternate cursor surface: %s", SDL_GetError());
+            {
+                std::string alternateError = scp::Utils::Localize("AppState/alternate_cursors");
+
+                SDL_Log("%s", scp::Utils::ReplacePlaceholder(alternateError, SDL_GetError()).c_str());
+            }
 
             SDL_DestroySurface(cursorSurfaces[i]);
         }
 
         cursor = SDL_CreateColorCursor(cursorSurfaces[0], cursorSurfaces[0]->w / 2, cursorSurfaces[0]->h / 2);
         if (!cursor)
-            SDL_Log("Failed to create cursor: %s", SDL_GetError());
+        {
+            std::string cursorError = scp::Utils::Localize("AppState/cursor_creation");
+
+            SDL_Log("%s", scp::Utils::ReplacePlaceholder(cursorError, SDL_GetError()).c_str());
+        }
 
         SDL_SetCursor(cursor);
 

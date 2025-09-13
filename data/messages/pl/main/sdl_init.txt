@@ -1,0 +1,1 @@
+Inicjalizacja SDL nie powiodła się: <error>

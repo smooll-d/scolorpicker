@@ -1,0 +1,1 @@
+Utworzenie powierzchni z zdjęcia ekranu nie powiodło się: <error>

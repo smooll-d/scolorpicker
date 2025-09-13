@@ -1,5 +1,6 @@
 #include "Screenshooter_X11.hpp"
 #include "Utils/Utils.hpp"
+#include <SDL3/SDL_error.h>
 
 #ifdef SCP_ENABLE_XLIB
 #include <X11/X.h>
@@ -29,7 +30,7 @@ namespace scp
         Display *display = XOpenDisplay(nullptr);
         if (!display)
         {
-            std::cerr << "Failed to open connection to X server!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/x_connection_init");
 
             std::exit(1);
         }
@@ -37,7 +38,7 @@ namespace scp
         Window root = DefaultRootWindow(display);
         if (!root)
         {
-            std::cerr << "Failed to get root window!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/root_window");
 
             std::exit(1);
         }
@@ -45,7 +46,7 @@ namespace scp
         XWindowAttributes attributes {};
         if (!XGetWindowAttributes(display, root, &attributes))
         {
-            std::cerr << "Failed to get root window attributes!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/root_window_attributes");
 
             std::exit(1);
         }
@@ -53,7 +54,7 @@ namespace scp
         XImage *screenshot = XGetImage(display, root, 0, 0, attributes.width, attributes.height, AllPlanes, ZPixmap);
         if (!screenshot)
         {
-            std::cerr << "Failed to take a screenshot!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/screenshot_failure");
 
             std::exit(1);
         }
@@ -85,7 +86,7 @@ namespace scp
         xcb_connection_t *connection = xcb_connect(nullptr, &defaultRootWindow);
         if (!connection)
         {
-            std::cerr << "Failed to open connection to X server!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/x_connection_init");
 
             std::exit(1);
         }
@@ -93,7 +94,7 @@ namespace scp
         xcb_screen_t *screen = _GetScreen(connection, defaultRootWindow);
         if (!screen)
         {
-            std::cerr << "Failed to get root window!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/root_window");
 
             std::exit(1);
         }
@@ -101,7 +102,7 @@ namespace scp
         xcb_visualtype_t *visualType = _GetVisualType(connection, screen);
         if (!visualType)
         {
-            std::cerr << "Failed to get the visual type of root!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/visual_type");
 
             std::exit(1);
         }
@@ -113,7 +114,7 @@ namespace scp
         xcb_image_t *screenshot = xcb_image_get(connection, screen->root, 0, 0, screen->width_in_pixels, screen->height_in_pixels, static_cast<uint32_t>(~0), XCB_IMAGE_FORMAT_Z_PIXMAP);
         if (!screenshot)
         {
-            std::cerr << "Failed to take a screenshot!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_X11/screenshot_failure");
 
             std::exit(1);
         }
@@ -138,10 +139,16 @@ namespace scp
 
     SDL_Texture *Screenshooter_X11::CreateTexture(SDL_Renderer *renderer)
     {
-        SDL_Surface *surface = SDL_CreateSurfaceFrom(this->_Info.width, this->_Info.height, SDL_PIXELFORMAT_RGBA32, this->_Info.pixels, this->_Info.pitch);
+        SDL_Surface *surface = SDL_CreateSurfaceFrom(this->_Info.width,
+                                                     this->_Info.height,
+                                                     SDL_PIXELFORMAT_RGBA32,
+                                                     this->_Info.pixels,
+                                                     this->_Info.pitch);
         if (!surface)
         {
-            SDL_Log("Failed to create surface from screenshot: %s", SDL_GetError());
+            std::string surfaceError = Utils::Localize("Screenshooter/surface_creation");
+
+            SDL_Log("%s", Utils::ReplacePlaceholder(surfaceError, SDL_GetError()).c_str());
 
             SDL_Quit();
         }
@@ -149,7 +156,9 @@ namespace scp
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
         if (!texture)
         {
-            SDL_Log("Failed to create texture from surface: %s", SDL_GetError());
+            std::string textureError = Utils::Localize("Screenshooter/texture_creation");
+
+            SDL_Log("%s", Utils::ReplacePlaceholder(textureError, SDL_GetError()).c_str());
 
             SDL_Quit();
         }
@@ -183,13 +192,14 @@ namespace scp
 
                 pixel = 0;
 
-                /* NOTE: After a little bit of research, I've found that Wayland pixel formats are, by default, little endian,
-                 * which means that we don't need to detect endianess there. On X11 pixel format endianess is dependent on the host
-                 * system. That complicates things, but if I understand this correctly, SDL should take the endianess out of this
-                 * by converting the pixel format itself. Currently we're doing SDL_PIXELFORMAT_RGBA32 which, under the hood,
-                 * converts the format to either RGBA8888 or ABGR8888 for little and big endian respectively.
-                 * I don't have a big endian system, so we're just going to have to wait and pray somebody with a big endian system
-                 * doesn't make an issue on GitHub about this.
+                /* NOTE: After a little bit of research, I've found that Wayland pixel formats are, by default,
+                 * little endian, which means that we don't need to detect endianess there. On X11 pixel format
+                 * endianess is dependent on the host system. That complicates things, but if I understand this
+                 * correctly, SDL should take the endianess out of this by converting the pixel format itself.
+                 * Currently we're doing SDL_PIXELFORMAT_RGBA32 which, under the hood, converts the format to either
+                 * RGBA8888 or ABGR8888 for little and big endian respectively. I don't have a big endian system, so
+                 * we're just going to have to wait and pray somebody with a big endian system doesn't make an issue on
+                 * GitHub about this.
                  */
                 for (int i = 0; i < bytesPerPixel; i++)
                 {

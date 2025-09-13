@@ -1,0 +1,1 @@
+Failed to get root window attributes!

@@ -1,0 +1,1 @@
+Otwarcie połączenia z serwerem X nie powiodło się!
