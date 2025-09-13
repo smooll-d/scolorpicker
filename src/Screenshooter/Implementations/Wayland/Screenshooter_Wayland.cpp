@@ -1,4 +1,5 @@
 #include "Screenshooter_Wayland.hpp"
+#include "Utils/Utils.hpp"
 
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
@@ -65,7 +66,9 @@ namespace scp
         SDL_Surface *surface = IMG_Load(this->_ScreenshotPath.c_str());
         if (!surface)
         {
-            SDL_Log("Failed to create surface from screenshot: %s", SDL_GetError());
+            std::string surfaceError = Utils::Localize("Screenshooter/surface_creation");
+
+            SDL_Log("%s", Utils::ReplacePlaceholder(surfaceError, SDL_GetError()).c_str());
 
             SDL_Quit();
         }
@@ -73,7 +76,9 @@ namespace scp
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
         if (!texture)
         {
-            SDL_Log("Failed to create texture from surface: %s", SDL_GetError());
+            std::string textureError = Utils::Localize("Screenshooter/texture_creation");
+
+            SDL_Log("%s", Utils::ReplacePlaceholder(textureError, SDL_GetError()).c_str());
 
             SDL_Quit();
         }
@@ -90,6 +95,6 @@ namespace scp
         if (response == 0)
             this->_ScreenshotPath = results["uri"].get<std::string>().erase(0, 7);
         else
-            std::cout << "Could not take screenshot!\n";
+            std::cerr << Utils::Localize("Screenshooter/Screenshooter_Wayland/screenshot_failure.txt");
     }
 }

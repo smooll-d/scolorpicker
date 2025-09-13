@@ -11,7 +11,6 @@
 #include "Implementations/Wayland/Screenshooter_Wayland.hpp"
 #endif // SCP_ENABLE_X11
 
-#include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <sys/types.h>
@@ -31,7 +30,7 @@ namespace scp
             return std::make_unique<Screenshooter_Wayland>();
 #endif
 
-        std::cerr << "Failed to determine platform!\n";
+        std::cerr << Utils::Localize("Screenshooter/failed_to_determine_platform");
 
         return nullptr;
     }

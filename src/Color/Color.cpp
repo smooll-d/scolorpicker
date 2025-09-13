@@ -118,7 +118,7 @@ namespace scp
     std::string Color::Output(AppState *appState, const std::string &color)
     {
         if (appState->cli.GetInfo().output == "terminal")
-            return color;
+            return color + '\n';
         else if (appState->cli.GetInfo().output == "clipboard")
         {
             int fd[2];
@@ -190,7 +190,7 @@ namespace scp
             }
         }
 
-        return "Selected color copied to clipboard.";
+        return Utils::Localize("Color/copied_to_clipboard");
     }
 
     std::string Color::Format(AppState *appState, const SDL_Color &color)
@@ -252,6 +252,6 @@ namespace scp
             return Output(appState, colorString);
         }
 
-        return "Failed to retrieve color!";
+        return Utils::Localize("Color/failed_to_retrieve");
     }
 }

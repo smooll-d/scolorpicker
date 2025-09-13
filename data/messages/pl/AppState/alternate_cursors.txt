@@ -1,0 +1,1 @@
+Dodanie alternatywnej powierzchni kursora nie powiodło się: <error>

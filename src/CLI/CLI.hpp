@@ -21,7 +21,7 @@ namespace scp
 
             const Info &GetInfo() { return _Info; }
 
-            std::string cwd;
+            static std::string cwd;
         private:
             bool _FindArgument(std::string option, std::string argument);
             void _ShowHelp();
