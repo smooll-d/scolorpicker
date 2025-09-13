@@ -7,9 +7,7 @@
 #include <format>
 #include <iostream>
 #include <iterator>
-#include <fstream>
 #include <filesystem>
-#include <locale>
 #include <string>
 
 namespace scp
@@ -94,31 +92,14 @@ namespace scp
 
     void CLI::_ShowHelp()
     {
-        std::fstream helpfile;
-
-        std::string help = "";
-
-        if (std::locale("").name() == "pl_PL" || std::locale("").name() == "pl_PL.UTF-8")
-            // helpfile.open(std::format("{}/data/messages/en/help.txt", cwd), helpfile.binary | helpfile.in);
-            helpfile.open("data/messages/pl/help.txt", helpfile.binary | helpfile.in);
-        else
-            // helpfile.open(std::format("{}/data/messages/en/help.txt", cwd), helpfile.binary | helpfile.in);
-            helpfile.open("data/messages/en/help.txt", helpfile.binary | helpfile.in);
-
-        if (!helpfile.is_open())
-            std::cout << "couldn't open file!\n";
-
-        while (std::getline(helpfile, help))
-            std::cout << help << '\n';
-
-        helpfile.close();
+        std::cout << Utils::Localize("help");
     }
 
     void CLI::_ShowVersion()
     {
         std::cout << std::format("scolorpicker v{}.{}.{}",
                                  SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH)
-                  << "\n\n";
+                  << '\n';
     }
 
     bool CLI::_FindArgument(std::string option, std::string argument)
