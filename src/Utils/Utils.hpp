@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 
 #include <string>
+#include <string_view>
 
 namespace scp
 {
@@ -16,6 +17,8 @@ namespace scp
         unsigned int CountTrailingZeroes(int number);
 
         int CheckSession();
+
+        std::string Localize(std::string_view messageName);
     } // namespace Utils
 } // namespace scp
 

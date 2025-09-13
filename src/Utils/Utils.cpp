@@ -2,7 +2,12 @@
 
 #include <SDL3/SDL.h>
 
+#include <format>
+#include <fstream>
+#include <iostream>
+#include <locale>
 #include <sstream>
+#include <string>
 
 namespace scp
 {
@@ -56,5 +61,30 @@ namespace scp
             return 1;
 
         return -1;
+    }
+
+    std::string Utils::Localize(std::string_view messageName)
+    {
+        std::fstream messageFile;
+
+        std::string line = "";
+        std::string message = "";
+
+        if (std::locale("").name() == "pl_PL" || std::locale("").name() == "pl_PL.UTF-8")
+            // messageFile.open(std::format("{}/data/messages/en/help.txt", cwd), helpfile.binary | helpfile.in);
+            messageFile.open(std::format("data/messages/pl/{}.txt", messageName), messageFile.binary | messageFile.in);
+        else
+            // messageFile.open(std::format("{}/data/messages/en/help.txt", cwd), helpfile.binary | helpfile.in);
+            messageFile.open(std::format("data/messages/en/{}.txt", messageName), messageFile.binary | messageFile.in);
+
+        if (!messageFile.is_open())
+            std::cerr << "Couldn't load message '" << messageName << "'\n";
+
+        while (std::getline(messageFile, line))
+            message += line + '\n';
+
+        messageFile.close();
+
+        return message;
     }
 } // namespace scp
