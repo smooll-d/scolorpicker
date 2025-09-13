@@ -1,0 +1,2 @@
+Nieznany format!
+Używanie "hex" jako formatu.

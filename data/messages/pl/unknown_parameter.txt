@@ -1,0 +1,2 @@
+Nieznana opcja: "<parameter>"!
+Zobacz "scolorpicker --help" dla użytku.

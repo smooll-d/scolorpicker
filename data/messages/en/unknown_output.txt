@@ -1,0 +1,2 @@
+Unknown output type!
+Color will be output to "terminal".
