@@ -60,10 +60,7 @@ namespace scp
             else if (this->_FindArgument(parameter, "all"))
                 this->_Info.format = "all";
             else
-            {
-                std::cout << "Unknown format!\n";
-                std::cout << "Color will be formatted in \"hex\"\n";
-            }
+                std::cout << Utils::Localize("unknown_format");
 
             return;
         }
@@ -74,17 +71,15 @@ namespace scp
             else if (this->_FindArgument(parameter, "clipboard"))
                 this->_Info.output = "clipboard";
             else
-            {
-                std::cout << "Unknown output type!\n";
-                std::cout << "Color will be output to \"terminal\"\n";
-            }
+                std::cout << Utils::Localize("unknown_output");
 
             return;
         }
         else
         {
-            std::cerr << "Unknown parameter: \"" << parameter << "\"!\n";
-            std::cerr << "See \"scolorpicker --help\" for usage.\n";
+            std::string unknownParameter = Utils::Localize("unknown_parameter");
+
+            std::cerr << Utils::ReplacePlaceholder(unknownParameter, parameter);
 
             std::exit(1);
         }
