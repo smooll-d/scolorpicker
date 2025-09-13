@@ -1,0 +1,2 @@
+Nieznane wyjście!
+Używanie "terminal" jako typu wyjścia.

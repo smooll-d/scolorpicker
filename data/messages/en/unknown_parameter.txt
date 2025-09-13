@@ -1,0 +1,2 @@
+Unknown parameter: "<parameter>"!
+See "scolorpicker --help" for usage.
