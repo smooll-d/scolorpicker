@@ -58,6 +58,10 @@ install(TARGETS "${CMAKE_PROJECT_NAME}"
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/data/messages"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/scolorpicker"
+)
+
 # Install all cursor files
 file(GLOB cursors "${CMAKE_SOURCE_DIR}/data/cursor/cursor_*.bmp")
 install(FILES ${cursors}
