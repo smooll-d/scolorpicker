@@ -19,6 +19,8 @@ namespace scp
         int CheckSession();
 
         std::string Localize(std::string_view messageName);
+
+        std::string ReplacePlaceholder(std::string placeholder, std::string_view actual);
     } // namespace Utils
 } // namespace scp
 
