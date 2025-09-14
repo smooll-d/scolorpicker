@@ -1,19 +1,24 @@
 scolorpicker [Options]
 
 Options:
-    --help,    -h          Show this message and exit
-    --version, -v          Show version and exit
-    --format,  -f <Output> How color value is formatted
-    --output,  -o <Output> Where color value is output
+    --help,     -h            Show this message and exit
+    --version,  -v            Show version and exit
+    --language, -l <Language> Set text language
+    --format,   -f <Format>   How color value is formatted
+    --output,   -o <Output>   Where color value is output
+
+Language:
+    en                        English                                         [DEFAULT]
+    pl                        Polish
 
 Format:
-    hex                    Hexadecimal (e.g. #FF0000)                      [DEFAULT]
-    lhex                   Lowercase hexadecimal (e.g. #ff0000)
-    rgb                    Red Green Blue (e.g. rgb(255, 0, 0))
-    hsl                    Hue Saturation Lightness (e.g. hsl(0, 100, 50))
-    hsv                    Hue Saturation Value (e.g. hsv(0, 100, 100))
-    all                    All formats separated by newlines
+    hex                       Hexadecimal (e.g. #FF0000)                      [DEFAULT]
+    lhex                      Lowercase hexadecimal (e.g. #ff0000)
+    rgb                       Red Green Blue (e.g. rgb(255, 0, 0))
+    hsl                       Hue Saturation Lightness (e.g. hsl(0, 100, 50))
+    hsv                       Hue Saturation Value (e.g. hsv(0, 100, 100))
+    all                       All formats separated by newlines
 
 Output:
-    terminal               Print color in specified format to terminal     [DEFAULT]
-    clipboard              Copy color in specified format to clipboard
+    terminal                  Print color in specified format to terminal     [DEFAULT]
+    clipboard                 Copy color in specified format to clipboard

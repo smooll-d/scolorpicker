@@ -1,19 +1,24 @@
 scolorpicker [Opcje]
 
 Opcje:
-    --help,    -h           Pokaż tę wiadomość i wyjdź
-    --version, -v           Pokaż wersję aplikacji i wyjdź
-    --format,  -f <Format>  Jak wartość koloru ma być sformatowana
-    --output,  -o <Wyjście> Dokąd wartość koloru ma być wysłana
+    --help,     -h           Pokaż tę wiadomość i wyjdź
+    --version,  -v           Pokaż wersję aplikacji i wyjdź
+    --language, -l <Język>   Ustaw język tekstu
+    --format,   -f <Format>  Jak wartość koloru ma być sformatowana
+    --output,   -o <Wyjście> Dokąd wartość koloru ma być wysłana
+
+Język:
+    pl                       Polski                                           [WARTOŚĆ DOMYŚLNA]
+    en                       Angielski
 
 Format:
-    hex                     Szesnastkowy (e.g. #FF0000)                      [WARTOŚĆ DOMYŚLNA]
-    lhex                    Szesnastkowy małymi literami (e.g. #ff0000)
-    rgb                     Czerwony Zielony Niebieski (e.g. rgb(255, 0, 0))
-    hsl                     Barwa Nasycenie Jasność (e.g. hsl(0, 100, 50))
-    hsv                     Barwa Nasycenie Wartość (e.g. hsv(0, 100, 100))
-    all                     Wszystkie formaty oddzielone nową linią
+    hex                      Szesnastkowy (e.g. #FF0000)                      [WARTOŚĆ DOMYŚLNA]
+    lhex                     Szesnastkowy małymi literami (e.g. #ff0000)
+    rgb                      Czerwony Zielony Niebieski (e.g. rgb(255, 0, 0))
+    hsl                      Barwa Nasycenie Jasność (e.g. hsl(0, 100, 50))
+    hsv                      Barwa Nasycenie Wartość (e.g. hsv(0, 100, 100))
+    all                      Wszystkie formaty oddzielone nową linią
 
 Wyjście:
-    terminal                Wyświetl wybrany kolor w terminalu               [WARTOŚĆ DOMYŚLNA]
-    clipboard               Kopiuj wybrany kolor do schowka
+    terminal                 Wyświetl wybrany kolor w terminalu               [WARTOŚĆ DOMYŚLNA]
+    clipboard                Kopiuj wybrany kolor do schowka
