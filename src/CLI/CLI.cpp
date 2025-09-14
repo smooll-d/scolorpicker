@@ -8,15 +8,17 @@
 #include <iostream>
 #include <iterator>
 #include <filesystem>
+#include <locale>
 #include <string>
 
 namespace scp
 {
+    CLI::Info CLI::_Info {};
+
     std::string CLI::cwd = "";
 
     CLI::CLI(int argc, char *argv[])
-     : _Info{},
-       _ParameterCount{argc},
+     : _ParameterCount{argc},
        _Parameters{argv, argv + argc},
        _ParameterIterator{},
        _ParameterDistance{0}
@@ -25,6 +27,8 @@ namespace scp
             this->cwd = SCP_DATA_DIRECTORY_DEV;
         else
             this->cwd = SCP_DATA_DIRECTORY_REL;
+
+        _SetLanguage();
 
         for (const auto &parameter : this->_Parameters)
         {
@@ -35,7 +39,21 @@ namespace scp
 
     void CLI::_HandleParameters(std::string parameter)
     {
-        if (parameter == "--help" || parameter == "-h")
+        if (parameter == "--language" || parameter == "-l")
+        {
+            if (this->_FindArgument(parameter, "en"))
+                this->_Info.language = "en";
+            else if (this->_FindArgument(parameter, "pl"))
+                this->_Info.language = "pl";
+            else
+            {
+                std::string UnknownLanguageError = Utils::Localize("CLI/unknown_language");
+
+                std::cout << Utils::ReplacePlaceholder(UnknownLanguageError,
+                                                       this->_Parameters.at(this->_ParameterDistance + 1));
+            }
+        }
+        else if (parameter == "--help" || parameter == "-h")
         {
             this->_ShowHelp();
 
@@ -97,6 +115,14 @@ namespace scp
         std::cout << std::format("scolorpicker v{}.{}.{}",
                                  SCP_VERSION_MAJOR, SCP_VERSION_MINOR, SCP_VERSION_PATCH)
                   << '\n';
+    }
+
+    void CLI::_SetLanguage()
+    {
+        if (std::locale("").name() == "pl_PL" || std::locale("").name() == "pl_PL.UTF-8")
+            this->_Info.language = "pl";
+        else
+            this->_Info.language = "en";
     }
 
     bool CLI::_FindArgument(std::string option, std::string argument)

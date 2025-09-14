@@ -70,11 +70,11 @@ namespace scp
         std::string line = "";
         std::string message = "";
 
-        if (std::locale("").name() == "pl_PL" || std::locale("").name() == "pl_PL.UTF-8")
-            messageFile.open(std::format("{}/messages/pl/{}.txt", CLI::cwd, messageName),
-                             messageFile.binary | messageFile.in);
-        else
+        if (CLI::GetInfo().language == "en")
             messageFile.open(std::format("{}/messages/en/{}.txt", CLI::cwd, messageName),
+                             messageFile.binary | messageFile.in);
+        else if (CLI::GetInfo().language == "pl")
+            messageFile.open(std::format("{}/messages/pl/{}.txt", CLI::cwd, messageName),
                              messageFile.binary | messageFile.in);
 
         if (!messageFile.is_open())

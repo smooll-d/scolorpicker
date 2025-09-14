@@ -14,21 +14,24 @@ namespace scp
             {
                 std::string format = "hex";
                 std::string output = "terminal";
+                std::string language = "en";
             };
 
             CLI() = default;
             CLI(int argc, char *argv[]);
 
-            const Info &GetInfo() { return _Info; }
+            static const Info &GetInfo() { return _Info; }
 
             static std::string cwd;
         private:
-            bool _FindArgument(std::string option, std::string argument);
             void _ShowHelp();
             void _ShowVersion();
             void _HandleParameters(std::string parameter);
+            void _SetLanguage();
 
-            Info _Info;
+            bool _FindArgument(std::string option, std::string argument);
+
+            static Info _Info;
 
             int _ParameterCount;
 
