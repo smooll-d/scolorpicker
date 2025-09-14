@@ -14,8 +14,8 @@
 #include <iostream>
 #include <unistd.h>
 
-// TODO: Add localization
-// TODO: Add appimage
+// TODO: fix icons
+// TODO: remove SDL_image as X11 dependency
 // TODO: flatpak package (?)
 // TODO: profit
 
