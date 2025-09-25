@@ -41,6 +41,13 @@ Here's a list of features both completed and planned marked by versions which th
 * color outputs:
     * terminal (v1.1.0)
     * clipboard (v1.0.0)
+* localization (v2.1.0):
+    available languages include:
+    * English
+    * Polish
+
+> [!NOTE]
+> Man pages are also localized.
 
 ### Planned
 * rounded color preview borders
