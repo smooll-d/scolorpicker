@@ -51,7 +51,7 @@ target_compile_options(${CMAKE_PROJECT_NAME} BEFORE PUBLIC -Wall)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src" ${_SCP_SDBUSCPP_INCLUDE_DIRECTORY})
 
-target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 ${SCP_SDL3_IMAGE} ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
 
 # Install executable
 install(TARGETS "${CMAKE_PROJECT_NAME}"
