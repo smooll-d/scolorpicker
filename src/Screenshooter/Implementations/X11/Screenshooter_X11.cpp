@@ -1,6 +1,5 @@
 #include "Screenshooter_X11.hpp"
 #include "Utils/Utils.hpp"
-#include <SDL3/SDL_error.h>
 
 #ifdef SCP_ENABLE_XLIB
 #include <X11/X.h>
@@ -16,6 +15,7 @@
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_error.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -23,7 +23,6 @@
 
 namespace scp
 {
-
 #ifdef SCP_ENABLE_XLIB
     void Screenshooter_X11::Take()
     {

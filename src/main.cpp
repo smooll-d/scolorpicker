@@ -4,7 +4,6 @@
 #include "Utils/Utils.hpp"
 #include "config.hpp"
 #include "Color/Color.hpp"
-#include <SDL3/SDL_error.h>
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
@@ -14,8 +13,6 @@
 #include <iostream>
 #include <unistd.h>
 
-// TODO: fix icons
-// TODO: remove SDL_image as X11 dependency
 // TODO: flatpak package (?)
 // TODO: profit
 
