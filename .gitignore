@@ -56,3 +56,4 @@ build/
 .cache/
 src/config.hpp
 .clangd
+.vscode/
