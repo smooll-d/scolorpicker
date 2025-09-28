@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.11)
 project(scolorpicker
     VERSION 2.2.0
     DESCRIPTION "smooll's Color Picker"
-    LANGUAGES CXX
+    LANGUAGES CXX C
 )
 
 option(SCP_ENABLE_X11 "Enable X11 backend support" OFF)
@@ -40,18 +40,22 @@ configure_file("${CMAKE_SOURCE_DIR}/cmake/config.hpp.in" "${CMAKE_SOURCE_DIR}/sr
 file(GLOB_RECURSE cli_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/CLI/*.cpp")
 file(GLOB_RECURSE utils_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utils/*.cpp")
 file(GLOB_RECURSE color_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Color/*.cpp")
+file(GLOB_RECURSE stb_image_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/stb_image/*.c")
 
 set(exe_src "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
-list(APPEND exe_src ${cli_src} ${utils_src} ${color_src} ${screenshot_src})
+list(APPEND exe_src ${cli_src} ${utils_src} ${color_src} ${screenshot_src} ${stb_image_src})
 
 add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 
 target_compile_options(${CMAKE_PROJECT_NAME} BEFORE PUBLIC -Wall)
 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src" ${_SCP_SDBUSCPP_INCLUDE_DIRECTORY})
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    "${CMAKE_SOURCE_DIR}/include"
+    "${CMAKE_SOURCE_DIR}/src"
+    ${_SCP_SDBUSCPP_INCLUDE_DIRECTORY})
 
-target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 ${SCP_SDL3_IMAGE} ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3 ${SCP_SDBUSCPP} ${SCP_SYSTEM_LIBRARIES})
 
 # Install executable
 install(TARGETS "${CMAKE_PROJECT_NAME}"

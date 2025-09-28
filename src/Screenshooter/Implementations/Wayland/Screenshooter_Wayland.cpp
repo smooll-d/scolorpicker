@@ -1,10 +1,15 @@
 #include "Screenshooter_Wayland.hpp"
 #include "Utils/Utils.hpp"
 
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
-#include <SDL3_image/SDL_image.h>
+#include <SDL3/SDL_surface.h>
 
 #include <sdbus-c++/sdbus-c++.h>
+
+#include <stb_image/stb_image.h>
 
 #include <string>
 #include <unistd.h>
@@ -63,12 +68,47 @@ namespace scp
 
     SDL_Texture *Screenshooter_Wayland::CreateTexture(SDL_Renderer *renderer)
     {
-        SDL_Surface *surface = IMG_Load(this->_ScreenshotPath.c_str());
+        int width;
+        int height;
+        int bytesPerPixel;
+
+        unsigned char *pixels = stbi_load(this->_ScreenshotPath.c_str(), &width, &height, &bytesPerPixel, 0);
+
+        int pitch = width * bytesPerPixel;
+        pitch = (pitch + 3) & ~3;
+
+        int redMask;
+        int greenMask;
+        int blueMask;
+        int alphaMask;
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+        redMask = 0x000000FF;
+        greenMask = 0x0000FF00;
+        blueMask = 0x00FF0000;
+        alphaMask = (bytesPerPixel == 4) ? 0xFF000000 : 0;
+#else
+        int s = (bytesPerPixel == 4) ? 0 : 8;
+        redMask = 0xFF000000 >> s;
+        greenMask = 0x00FF0000 >> s;
+        blueMask = 0x0000FF00 >> s;
+        alphaMask = 0x000000FF >> s;
+#endif
+
+        SDL_PixelFormat pixelFormat = SDL_GetPixelFormatForMasks(bytesPerPixel * 8,
+                                                                 redMask,
+                                                                 greenMask,
+                                                                 blueMask,
+                                                                 alphaMask);
+
+        SDL_Surface *surface = SDL_CreateSurfaceFrom(width, height, pixelFormat, pixels, pitch);
         if (!surface)
         {
             std::string surfaceError = Utils::Localize("Screenshooter/surface_creation");
 
             SDL_Log("%s", Utils::ReplacePlaceholder(surfaceError, SDL_GetError()).c_str());
+
+            stbi_image_free(pixels);
 
             SDL_Quit();
         }

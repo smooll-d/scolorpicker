@@ -13,6 +13,7 @@
 #include <iostream>
 #include <unistd.h>
 
+// TODO: add window icon
 // TODO: flatpak package (?)
 // TODO: profit
 

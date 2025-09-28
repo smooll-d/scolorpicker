@@ -1,17 +1,17 @@
-function(pull_sdl_image)
-    set(SDLIMAGE_SAMPLES OFF CACHE BOOL "" FORCE)
-
-    FetchContent_Declare(
-        SDL_image
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-        GIT_TAG        release-3.2.4
-        GIT_SHALLOW    ON
-        GIT_PROGRESS   ON
-    )
-    FetchContent_MakeAvailable(SDL_image)
-
-    set(SCP_SDL3_IMAGE SDL3_image::SDL3_image CACHE INTERNAL "SCP_SDL3_IMAGE")
-endfunction()
+# function(pull_sdl_image)
+#     set(SDLIMAGE_SAMPLES OFF CACHE BOOL "" FORCE)
+#
+#     FetchContent_Declare(
+#         SDL_image
+#         GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+#         GIT_TAG        release-3.2.4
+#         GIT_SHALLOW    ON
+#         GIT_PROGRESS   ON
+#     )
+#     FetchContent_MakeAvailable(SDL_image)
+#
+#     set(SCP_SDL3_IMAGE SDL3_image::SDL3_image CACHE INTERNAL "SCP_SDL3_IMAGE")
+# endfunction()
 
 find_package(SDL3 CONFIG)
 
@@ -36,15 +36,15 @@ if (NOT TARGET SDL3::SDL3 OR SCP_BUILD_DEPENDENCIES)
     FetchContent_MakeAvailable(SDL3)
 endif()
 
-find_package(SDL3_image CONFIG)
-
-if(SCP_BUILD_DEPENDENCIES AND (SCP_ENABLE_LINUX OR SCP_ENABLE_WAYLAND))
-    pull_sdl_image()
-elseif (NOT TARGET SDL3_image::SDL3_image AND (SCP_ENABLE_LINUX OR SCP_ENABLE_WAYLAND))
-    pull_sdl_image()
-else()
-    set(SCP_SDL3_IMAGE SDL3_image::SDL3_image CACHE INTERNAL "SCP_SDL3_IMAGE")
-endif()
+# find_package(SDL3_image CONFIG)
+#
+# if(SCP_BUILD_DEPENDENCIES AND (SCP_ENABLE_LINUX OR SCP_ENABLE_WAYLAND))
+#     pull_sdl_image()
+# elseif (NOT TARGET SDL3_image::SDL3_image AND (SCP_ENABLE_LINUX OR SCP_ENABLE_WAYLAND))
+#     pull_sdl_image()
+# else()
+#     set(SCP_SDL3_IMAGE SDL3_image::SDL3_image CACHE INTERNAL "SCP_SDL3_IMAGE")
+# endif()
 
 # Disabled for this project
 # find_package(SDL3_mixer CONFIG)
