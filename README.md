@@ -58,7 +58,6 @@ scolorpicker has a couple installation methods with more (like a flatpak package
 
 ### Dependencies
 * SDL3 (*)
-* SDL3_image (*)
 
 #### X11
 * Xlib or xcb (for screenshots)
@@ -68,7 +67,10 @@ scolorpicker has a couple installation methods with more (like a flatpak package
 * sdbus-c++ (for screenshots) (*)
 * [desktop portal](https://wiki.archlinux.org/title/XDG_Desktop_Portal) which supplies [Screenshot](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Screenshot.html) + its dependencies (e.g. `xdg-desktop-portal-wlr` + grim)
 
-(*) - if installing through the AUR or building manually, these are optional.
+(*) - if installing through the AUR or building manually, these are optional as in, they can be downloaded and built automatically without having to install said dependencies system-wide.
+
+> [!CAUTION]
+> Even though it might look like sdl_image is not a dependency anymore, please be careful when installing scolorpicker through the AUR as it has not yet been updated to the newest version. This is temporary and will be taken care of in v2.3.0
 
 ### AUR
 If using Arch Linux, you can very simply install scolorpicker from the AUR (Arch User Repository) using an AUR helper (e.g. [yay](https://github.com/Jguer/yay) or [paru](https://github.com/Morganamilo/paru/)).
