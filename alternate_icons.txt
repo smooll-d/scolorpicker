@@ -1,0 +1,1 @@
+Dodanie alternatywnej powierzchni ikony okna nie powiodło się: <error>
