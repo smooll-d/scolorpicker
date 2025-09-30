@@ -1,0 +1,1 @@
+Utworzenie renderera nie powiodło się: <error>

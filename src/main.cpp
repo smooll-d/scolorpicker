@@ -4,6 +4,11 @@
 #include "Utils/Utils.hpp"
 #include "config.hpp"
 #include "Color/Color.hpp"
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_video.h>
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
@@ -14,8 +19,6 @@
 #include <unistd.h>
 
 // TODO: add window icon
-// TODO: flatpak package (?)
-// TODO: profit
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -33,32 +36,41 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
-        std::string SDLInitError = scp::Utils::Localize("main/sdl_init.txt");
+        std::string SDLInitError = scp::Utils::Localize("main/sdl_init");
 
         SDL_Log("%s", scp::Utils::ReplacePlaceholder(SDLInitError, SDL_GetError()).c_str());
 
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("scolorpicker",
-                                     1920, 1080,
-                                     SDL_WINDOW_FULLSCREEN,
-                                     &appState->window,
-                                     &appState->renderer))
+    appState->window = SDL_CreateWindow("scolorpicker", 640, 480, 0);
+    if (!appState->window)
     {
-        std::string SDLWindowRendererError = scp::Utils::Localize("main/window_renderer_creation");
+        std::string SDLWindowRendererError = scp::Utils::Localize("main/window_creation");
 
         SDL_Log("%s", scp::Utils::ReplacePlaceholder(SDLWindowRendererError, SDL_GetError()).c_str());
 
         return SDL_APP_FAILURE;
     }
 
-    SDL_DisplayID windowDisplayID = SDL_GetDisplayForWindow(appState->window);
-    const SDL_DisplayMode *windowDisplay = SDL_GetDesktopDisplayMode(windowDisplayID);
-
-    SDL_SetWindowSize(appState->window, windowDisplay->w, windowDisplay->h);
-
+    appState->CreateWindowIcon();
     appState->CreateCursor();
+
+    SDL_DisplayID windowDisplayID = SDL_GetDisplayForWindow(appState->window);
+    const SDL_DisplayMode *windowDisplayMode = SDL_GetDesktopDisplayMode(windowDisplayID);
+
+    SDL_SetWindowSize(appState->window, windowDisplayMode->w, windowDisplayMode->h);
+    SDL_SetWindowFullscreen(appState->window, true);
+
+    appState->renderer = SDL_CreateRenderer(appState->window, nullptr);
+    if (!appState->renderer)
+    {
+        std::string rendererCreationError = scp::Utils::Localize("main/renderer_creation");
+
+        SDL_Log("%s", scp::Utils::ReplacePlaceholder(rendererCreationError, SDL_GetError()).c_str());
+
+        return SDL_APP_FAILURE;
+    }
 
     appState->screenshot = screenshooter->CreateTexture(appState->renderer);
 
@@ -83,6 +95,8 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             {
                 case SDLK_ESCAPE:
                     return SDL_APP_SUCCESS;
+                case SDLK_F:
+                    SDL_SetWindowFullscreen(appState->window, false);
                 default:
                     break;
             }

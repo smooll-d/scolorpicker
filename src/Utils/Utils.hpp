@@ -5,6 +5,7 @@
 
 #include <string>
 #include <string_view>
+#include <filesystem>
 
 namespace scp
 {
@@ -21,6 +22,8 @@ namespace scp
         std::string Localize(std::string_view messageName);
 
         std::string ReplacePlaceholder(std::string placeholder, std::string_view actual);
+
+        SDL_Surface *CreateSurfaceFromSTBI(std::filesystem::path filepath);
     } // namespace Utils
 } // namespace scp
 

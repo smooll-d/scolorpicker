@@ -1,0 +1,1 @@
+Ustawienie ikony okna nie powiodło się: <error>

@@ -37,15 +37,13 @@ struct AppState
 
     void CreateCursor()
     {
-        SDL_Surface *cursorSurfaces[4]
+        SDL_Surface *cursorSurfaces[2]
         {
-            SDL_LoadBMP(std::format("{}/cursor/cursor_16x16.bmp", cli.cwd.c_str()).c_str()),
             SDL_LoadBMP(std::format("{}/cursor/cursor_32x32.bmp", cli.cwd.c_str()).c_str()),
-            SDL_LoadBMP(std::format("{}/cursor/cursor_64x64.bmp", cli.cwd.c_str()).c_str()),
-            SDL_LoadBMP(std::format("{}/cursor/cursor_128x128.bmp", cli.cwd.c_str()).c_str())
+            SDL_LoadBMP(std::format("{}/cursor/cursor_16x16.bmp", cli.cwd.c_str()).c_str()),
         };
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (!cursorSurfaces[i])
             {
@@ -55,7 +53,7 @@ struct AppState
             }
         }
 
-        for (int i = 1; i < 4; i++)
+        for (int i = 1; i < 2; i++)
         {
             if (!SDL_AddSurfaceAlternateImage(cursorSurfaces[0], cursorSurfaces[i]))
             {
@@ -75,12 +73,59 @@ struct AppState
             SDL_Log("%s", scp::Utils::ReplacePlaceholder(cursorError, SDL_GetError()).c_str());
         }
 
-        SDL_SetCursor(cursor);
+        if (!SDL_SetCursor(cursor))
+        {
+            std::string setCursorError = scp::Utils::Localize("AppState/set_cursor");
+
+            SDL_Log("%s", scp::Utils::ReplacePlaceholder(setCursorError, SDL_GetError()).c_str());
+        }
 
         cursorW = cursorSurfaces[0]->w;
         cursorH = cursorSurfaces[0]->h;
 
         SDL_DestroySurface(cursorSurfaces[0]);
+    }
+
+    void CreateWindowIcon()
+    {
+        SDL_Surface *iconSurfaces[4]
+        {
+            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_16x16.png", cli.cwd)),
+            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_32x32.png", cli.cwd)),
+            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_64x64.png", cli.cwd)),
+            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_128x128.png", cli.cwd))
+        };
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (!iconSurfaces[i])
+            {
+                std::string iconSurfaceError = scp::Utils::Localize("AppState/icon_surface");
+
+                SDL_Log("%s", scp::Utils::ReplacePlaceholder(iconSurfaceError, SDL_GetError()).c_str());
+            }
+        }
+
+        for (int i = 1; i < 4; i++)
+        {
+            if (!SDL_AddSurfaceAlternateImage(iconSurfaces[0], iconSurfaces[i]))
+            {
+                std::string alternateIconError = scp::Utils::Localize("AppState/alternate_icons");
+
+                SDL_Log("%s", scp::Utils::ReplacePlaceholder(alternateIconError, SDL_GetError()).c_str());
+            }
+
+            SDL_DestroySurface(iconSurfaces[i]);
+        }
+
+        if (!SDL_SetWindowIcon(window, iconSurfaces[0]))
+        {
+            std::string windowIconError = scp::Utils::Localize("AppState/window_icon");
+
+            SDL_Log("%s", scp::Utils::ReplacePlaceholder(windowIconError, SDL_GetError()).c_str());
+        }
+
+        SDL_DestroySurface(iconSurfaces[0]);
     }
 };
 

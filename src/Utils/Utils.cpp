@@ -3,11 +3,14 @@
 
 #include <SDL3/SDL.h>
 
+#include <stb_image/stb_image.h>
+
 #include <format>
 #include <fstream>
 #include <locale>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 namespace scp
 {
@@ -98,5 +101,55 @@ namespace scp
         auto placeholderEnd = std::find(placeholder.begin(), placeholder.end(), '>');
 
         return placeholder.replace(placeholderBegin, std::next(placeholderEnd), actual);
+    }
+
+    SDL_Surface *Utils::CreateSurfaceFromSTBI(std::filesystem::path filepath)
+    {
+        int width;
+        int height;
+        int bytesPerPixel;
+        int pitch;
+        int redMask;
+        int greenMask;
+        int blueMask;
+        int alphaMask;
+
+        unsigned char *pixels = stbi_load(filepath.c_str(), &width, &height, &bytesPerPixel, 0);
+
+        pitch = width * bytesPerPixel;
+        pitch = (pitch + 3) & ~3;
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+        redMask = 0x000000FF;
+        greenMask = 0x0000FF00;
+        blueMask = 0x00FF0000;
+        alphaMask = (bytesPerPixel == 4) ? 0xFF000000 : 0;
+#else
+        int s = (bytesPerPixel == 4) ? 0 : 8;
+        redMask = 0xFF000000 >> s;
+        greenMask = 0x00FF0000 >> s;
+        blueMask = 0x0000FF00 >> s;
+        alphaMask = 0x000000FF >> s;
+#endif
+
+        SDL_PixelFormat pixelFormat = SDL_GetPixelFormatForMasks(bytesPerPixel * 8,
+                                                                 redMask,
+                                                                 greenMask,
+                                                                 blueMask,
+                                                                 alphaMask);
+
+        SDL_Surface *surface = SDL_CreateSurfaceFrom(width, height, pixelFormat, pixels, pitch);
+        if (!surface)
+        {
+            std::string surfaceSTBIError = Utils::Localize("Utils/surface_stbi_creation");
+
+            SDL_Log("%s", Utils::ReplacePlaceholder(surfaceSTBIError, SDL_GetError()).c_str());
+
+            stbi_image_free(pixels);
+
+            SDL_Quit();
+        }
+
+        return surface;
     }
 } // namespace scp

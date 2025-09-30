@@ -1,1 +1,0 @@
-Nie można stworzyć okna/renderera: <error>
