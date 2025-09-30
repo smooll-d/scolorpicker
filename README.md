@@ -90,7 +90,7 @@ If you cannot use any of the above options for installation, you can always buil
 When cloning the repo, be sure to clone a specific tag and not the master branch. This will ensure that your build is stable.
 
 ```bash
-git clone --depth=1 --branch=v2.2.0 https://github.com/smooll-d/scolorpicker.git
+git clone --depth=1 --branch=v2.3.0 https://github.com/smooll-d/scolorpicker.git
 ```
 
 ##### Legacy Version
