@@ -18,6 +18,9 @@ struct AppState
 
     SDL_Window *window;
 
+    int windowWidth;
+    int windowHeight;
+
     SDL_Renderer *renderer;
 
     SDL_Texture *screenshot;
