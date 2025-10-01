@@ -18,8 +18,6 @@
 #include <iostream>
 #include <unistd.h>
 
-// TODO: add window icon
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     AppState *appState = static_cast<AppState*>(SDL_calloc(1, sizeof(AppState)));
@@ -95,8 +93,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
             {
                 case SDLK_ESCAPE:
                     return SDL_APP_SUCCESS;
-                case SDLK_F:
-                    SDL_SetWindowFullscreen(appState->window, false);
                 default:
                     break;
             }
