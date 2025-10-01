@@ -57,6 +57,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_DisplayID windowDisplayID = SDL_GetDisplayForWindow(appState->window);
     const SDL_DisplayMode *windowDisplayMode = SDL_GetDesktopDisplayMode(windowDisplayID);
 
+    appState->windowWidth = windowDisplayMode->w;
+    appState->windowHeight = windowDisplayMode->h;
+
     SDL_SetWindowSize(appState->window, windowDisplayMode->w, windowDisplayMode->h);
     SDL_SetWindowFullscreen(appState->window, true);
 
@@ -148,6 +151,17 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         SDL_SetRenderDrawColor(appState->renderer, 0, 0, 0, 255);
     else if (color.r <= 127 || color.g <= 127 || color.b <= 127)
         SDL_SetRenderDrawColor(appState->renderer, 255, 255, 255, 255);
+
+    if (appState->colorViewBorder.w + appState->colorViewBorder.x >= appState->windowWidth)
+    {
+        appState->colorView.x -= 120;
+        appState->colorViewBorder.x -= 120;
+    }
+    else if (appState->colorViewBorder.h + appState->colorViewBorder.y >= appState->windowHeight)
+    {
+        appState->colorView.y -= 120;
+        appState->colorViewBorder.y -= 120;
+    }
 
     SDL_RenderFillRect(appState->renderer, &appState->colorViewBorder);
 

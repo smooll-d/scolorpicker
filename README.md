@@ -45,12 +45,12 @@ Here's a list of features both completed and planned marked by versions which th
     available languages include:
     * English
     * Polish
+* color preview not going out-of-bounds of screen (v2.4.0)
 
 > [!NOTE]
 > Man pages are also localized.
 
 ### Planned
-* color preview not going out-of-bounds of the screen
 * rounded color preview borders
 * saving to clipboard manually instead of using external programs
 
