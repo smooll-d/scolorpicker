@@ -35,9 +35,6 @@ struct AppState
     float mouseX;
     float mouseY;
 
-    int cursorW;
-    int cursorH;
-
     void CreateCursor()
     {
         SDL_Surface *cursorSurfaces[2]
@@ -82,9 +79,6 @@ struct AppState
 
             SDL_Log("%s", scp::Utils::ReplacePlaceholder(setCursorError, SDL_GetError()).c_str());
         }
-
-        cursorW = cursorSurfaces[0]->w;
-        cursorH = cursorSurfaces[0]->h;
 
         SDL_DestroySurface(cursorSurfaces[0]);
     }
