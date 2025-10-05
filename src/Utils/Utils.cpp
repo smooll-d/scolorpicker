@@ -3,8 +3,13 @@
 
 #include <SDL3/SDL.h>
 
+#include <SDL3/SDL_pen.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_stdinc.h>
 #include <stb_image/stb_image.h>
 
+#include <cmath>
 #include <format>
 #include <fstream>
 #include <locale>
@@ -37,6 +42,73 @@ namespace scp
         SDL_SetRenderDrawColorFloat(renderer, red, green, blue, SDL_ALPHA_OPAQUE_FLOAT);
     }
 
+    void Utils::DrawFilledCircle(SDL_Renderer *renderer, std::pair<float, float> center, float radius)
+    {
+        std::vector<SDL_FPoint> lines;
+
+        float d = 1.0f - radius;
+
+        float x = 0.0f;
+        float y = radius;
+        float cx = center.first;
+        float cy = center.second;
+
+        while (x <= y)
+        {
+            lines.push_back({ cx + x, cy - y });
+            lines.push_back({ cx + x, cy + y });
+            lines.push_back({ cx - x, cy - y });
+            lines.push_back({ cx - x, cy + y });
+            lines.push_back({ cx + y, cy - x });
+            lines.push_back({ cx + y, cy + x });
+            lines.push_back({ cx - y, cy - x });
+            lines.push_back({ cx - y, cy + x });
+
+            x++;
+            if (d < 0.0f)
+                d += 2.0f * x + 1.0f;
+            else
+            {
+                y--;
+                d += 2.0f * (x - y) + 1.0f;
+            }
+        }
+
+        lines.shrink_to_fit();
+
+        SDL_RenderLines(renderer, lines.data(), lines.size());
+    }
+
+    void Utils::DrawFilledRoundedRectangle(SDL_Renderer *renderer,
+                                           std::pair<float, float> position,
+                                           std::pair<float, float> size,
+                                           float radius)
+    {
+        float x = position.first;
+        float y = position.second;
+        float width = size.first;
+        float height = size.second;
+
+        SDL_FRect vertical
+        {
+            x, y + radius,
+            width + 1.5f, height - (radius * 2.0f)
+        };
+        SDL_FRect horizontal
+        {
+            x + radius, y,
+            width - (radius * 2.0f), height + 1.5f
+        };
+
+        DrawFilledCircle(renderer, { x + radius,         y + radius          }, radius); // Top-left
+        DrawFilledCircle(renderer, { x + width - radius, y + radius          }, radius); // Bottom-left
+        DrawFilledCircle(renderer, { x + radius,         y + height - radius }, radius); // Top-right
+        DrawFilledCircle(renderer, { x + width - radius, y + height - radius }, radius); // Bottom-right
+
+        SDL_RenderFillRect(renderer, &vertical);
+        SDL_RenderFillRect(renderer, &horizontal);
+    }
+
     // Returns index of the first bit different than 0 in a byte sequence, counting from the least significant bit.
     unsigned int Utils::CountTrailingZeroes(int number)
     {
@@ -64,6 +136,11 @@ namespace scp
             return 1;
 
         return -1;
+    }
+
+    double Utils::DegreesToRadians(int degrees)
+    {
+        return static_cast<double>(degrees) * (SDL_PI_D) / 180.0;
     }
 
     std::string Utils::Localize(std::string_view messageName)
@@ -152,4 +229,50 @@ namespace scp
 
         return surface;
     }
+
+    // void Utils::DrawCircle(SDL_Renderer *renderer, SDL_FPoint center, int radius)
+    // {
+    //     const int pointsSize = RoundUpToMultipleOfEight(radius * 8 * 35 / 49);
+    //     const int diameter = (radius * 2);
+    //
+    //     SDL_FPoint points[pointsSize];
+    //
+    //     int drawCount = 0;
+    //     int tx = 1;
+    //     int ty = 1;
+    //     int error = tx - diameter;
+    //
+    //     float x = static_cast<float>(radius) - 1;
+    //     float y = 0;
+    //
+    //     while (x >= y)
+    //     {
+    //         points[drawCount+0] = { center.x + x, center.y - y };
+    //         points[drawCount+1] = { center.x + x, center.y + y };
+    //         points[drawCount+2] = { center.x - x, center.y - y };
+    //         points[drawCount+3] = { center.x - x, center.y + y };
+    //         points[drawCount+4] = { center.x + x, center.y - y };
+    //         points[drawCount+5] = { center.x + x, center.y + y };
+    //         points[drawCount+6] = { center.x - x, center.y - y };
+    //         points[drawCount+7] = { center.x - x, center.y + y };
+    //
+    //         drawCount += 8;
+    //
+    //         if (error <= 0)
+    //         {
+    //             y++;
+    //             error += ty;
+    //             ty += 2;
+    //         }
+    //
+    //         if (error > 0)
+    //         {
+    //             x--;
+    //             tx += 2;
+    //             error += tx - diameter;
+    //         }
+    //     }
+    //
+    //     SDL_RenderPoints(renderer, points, drawCount);
+    // }
 } // namespace scp
