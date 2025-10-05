@@ -12,6 +12,20 @@
 
 #include <format>
 
+struct ColorView
+{
+    float x;
+    float y;
+    float width;
+    float height;
+    float radius;
+
+    void Draw(SDL_Renderer *renderer)
+    {
+        scp::Utils::DrawFilledRoundedRectangle(renderer, { x, y }, { width, height }, radius);
+    }
+};
+
 struct AppState
 {
     scp::CLI cli;
@@ -29,11 +43,12 @@ struct AppState
 
     SDL_Cursor *cursor;
 
-    SDL_FRect colorView;
-    SDL_FRect colorViewBorder;
+    ColorView colorView;
+    ColorView colorViewBorder;
 
     float mouseX;
     float mouseY;
+    float borderThickness;
 
     void CreateCursor()
     {

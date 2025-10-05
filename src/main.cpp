@@ -8,6 +8,7 @@
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_video.h>
 
 #define SDL_MAIN_USE_CALLBACKS
@@ -75,10 +76,15 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     appState->screenshot = screenshooter->CreateTexture(appState->renderer);
 
-    appState->colorView.w = 100.0f;
-    appState->colorView.h = 100.0f;
-    appState->colorViewBorder.w = appState->colorView.w + 5.0f;
-    appState->colorViewBorder.h = appState->colorView.h + 5.0f;
+    appState->borderThickness = 3.0f;
+
+    appState->colorView.radius = 15.0f;
+    appState->colorView.width = 100.0f;
+    appState->colorView.height = 100.0f;
+
+    appState->colorViewBorder.radius = appState->colorView.radius + appState->borderThickness;
+    appState->colorViewBorder.width = appState->colorView.width + 2.0f * appState->borderThickness;
+    appState->colorViewBorder.height = appState->colorView.height + 2.0f * appState->borderThickness;
 
     return SDL_APP_CONTINUE;
 }
@@ -133,8 +139,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     appState->colorView.x = appState->mouseX + 10.0f;
     appState->colorView.y = appState->mouseY + 10.0f;
-    appState->colorViewBorder.x = appState->colorView.x - 2.5f;
-    appState->colorViewBorder.y = appState->colorView.y - 2.5f;
+    appState->colorViewBorder.x = appState->colorView.x - appState->borderThickness;
+    appState->colorViewBorder.y = appState->colorView.y - appState->borderThickness;
 
     SDL_SetRenderDrawColor(appState->renderer, 0, 0, 0, 255);
 
@@ -152,23 +158,23 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     else if (color.r <= 127 || color.g <= 127 || color.b <= 127)
         SDL_SetRenderDrawColor(appState->renderer, 255, 255, 255, 255);
 
-    if (appState->colorViewBorder.w + appState->colorViewBorder.x >= appState->windowWidth)
+    if (appState->colorViewBorder.width + appState->colorViewBorder.x >= appState->windowWidth)
     {
-        appState->colorView.x -= 120;
-        appState->colorViewBorder.x -= 120;
+        appState->colorView.x -= appState->colorViewBorder.width + appState->borderThickness + 10.0f;
+        appState->colorViewBorder.x -= appState->colorViewBorder.height + appState->borderThickness + 10.0f;
     }
-    else if (appState->colorViewBorder.h + appState->colorViewBorder.y >= appState->windowHeight)
+    if (appState->colorViewBorder.height + appState->colorViewBorder.y >= appState->windowHeight)
     {
-        appState->colorView.y -= 120;
-        appState->colorViewBorder.y -= 120;
+        appState->colorView.y -= appState->colorViewBorder.width + appState->borderThickness + 10.0f;
+        appState->colorViewBorder.y -= appState->colorViewBorder.height + appState->borderThickness + 10.0f;
     }
 
-    SDL_RenderFillRect(appState->renderer, &appState->colorViewBorder);
+    appState->colorViewBorder.Draw(appState->renderer);
 
     SDL_SetRenderDrawColor(appState->renderer,
                            color.r, color.g, color.b, color.a);
 
-    SDL_RenderFillRect(appState->renderer, &appState->colorView);
+    appState->colorView.Draw(appState->renderer);
 
     SDL_RenderPresent(appState->renderer);
 

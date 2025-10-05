@@ -55,5 +55,7 @@ dkms.conf
 build/
 .cache/
 src/config.hpp
+src/Utils/Utils.hpp.bak
+src/Utils/Utils.cpp.bak
 .clangd
 .vscode/
