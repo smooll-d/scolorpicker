@@ -3,13 +3,9 @@
 
 #include "CLI/CLI.hpp"
 #include "Utils/Utils.hpp"
+#include "config.hpp"
 
-#include <SDL3/SDL_error.h>
-#include <SDL3/SDL_log.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_surface.h>
-#include <SDL3/SDL_video.h>
-
+#include <filesystem>
 #include <format>
 
 struct ColorView
@@ -100,13 +96,26 @@ struct AppState
 
     void CreateWindowIcon()
     {
-        SDL_Surface *iconSurfaces[4]
+        SDL_Surface *iconSurfaces[4] {};
+
+        if (std::filesystem::exists(SCP_DATA_DIRECTORY_DEV))
         {
-            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_16x16.png", cli.cwd)),
-            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_32x32.png", cli.cwd)),
-            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_64x64.png", cli.cwd)),
-            scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_128x128.png", cli.cwd))
-        };
+            iconSurfaces[0] = scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_16x16.png", cli.cwd));
+            iconSurfaces[1] = scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_32x32.png", cli.cwd));
+            iconSurfaces[2] = scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_64x64.png", cli.cwd));
+            iconSurfaces[3] = scp::Utils::CreateSurfaceFromSTBI(std::format("{}/logo/logo_128x128.png", cli.cwd));
+        }
+        else
+        {
+            iconSurfaces[0] = scp::Utils::CreateSurfaceFromSTBI
+                (std::format("{}/icons/hicolor/16x16/apps/scolorpicker.png", SCP_DATADIR));
+            iconSurfaces[1] = scp::Utils::CreateSurfaceFromSTBI
+                (std::format("{}/icons/hicolor/32x32/apps/scolorpicker.png", SCP_DATADIR));
+            iconSurfaces[2] = scp::Utils::CreateSurfaceFromSTBI
+                (std::format("{}/icons/hicolor/64x64/apps/scolorpicker.png", SCP_DATADIR));
+            iconSurfaces[3] = scp::Utils::CreateSurfaceFromSTBI
+                (std::format("{}/icons/hicolor/128x128/apps/scolorpicker.png", SCP_DATADIR));
+        }
 
         for (int i = 0; i < 4; i++)
         {
