@@ -4,8 +4,6 @@
 #include "Screenshooter/Screenshooter.hpp"
 #include "config.hpp"
 
-#include <SDL3/SDL_render.h>
-
 #ifdef SCP_ENABLE_XCB
 #include <xcb/xcb.h>
 #include <xcb/xproto.h>

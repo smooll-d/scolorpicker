@@ -3,9 +3,6 @@
 
 #include "AppState.hpp"
 
-#include <SDL3/SDL_pixels.h>
-#include <SDL3/SDL_surface.h>
-
 #include <cstdint>
 #include <string>
 #include <tuple>

@@ -1,12 +1,6 @@
 #include "Screenshooter_Wayland.hpp"
 #include "Utils/Utils.hpp"
 
-#include <SDL3/SDL_error.h>
-#include <SDL3/SDL_init.h>
-#include <SDL3/SDL_pixels.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_surface.h>
-
 #include <sdbus-c++/sdbus-c++.h>
 
 #include <stb_image/stb_image.h>

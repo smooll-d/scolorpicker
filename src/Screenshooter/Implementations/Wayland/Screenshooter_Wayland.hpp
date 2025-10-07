@@ -3,8 +3,6 @@
 
 #include "Screenshooter/Screenshooter.hpp"
 
-#include <SDL3/SDL_render.h>
-
 #include <sdbus-c++/sdbus-c++.h>
 
 #include <memory>

@@ -12,11 +12,6 @@
 #include <xcb/xproto.h>
 #endif // SCP_ENABLE_XCB
 
-#include <SDL3/SDL_init.h>
-#include <SDL3/SDL_log.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_error.h>
-
 #include <cstdlib>
 #include <iostream>
 #include <bit>
