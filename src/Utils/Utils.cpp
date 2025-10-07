@@ -3,10 +3,6 @@
 
 #include <SDL3/SDL.h>
 
-#include <SDL3/SDL_pen.h>
-#include <SDL3/SDL_rect.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_stdinc.h>
 #include <stb_image/stb_image.h>
 
 #include <cmath>
@@ -229,50 +225,4 @@ namespace scp
 
         return surface;
     }
-
-    // void Utils::DrawCircle(SDL_Renderer *renderer, SDL_FPoint center, int radius)
-    // {
-    //     const int pointsSize = RoundUpToMultipleOfEight(radius * 8 * 35 / 49);
-    //     const int diameter = (radius * 2);
-    //
-    //     SDL_FPoint points[pointsSize];
-    //
-    //     int drawCount = 0;
-    //     int tx = 1;
-    //     int ty = 1;
-    //     int error = tx - diameter;
-    //
-    //     float x = static_cast<float>(radius) - 1;
-    //     float y = 0;
-    //
-    //     while (x >= y)
-    //     {
-    //         points[drawCount+0] = { center.x + x, center.y - y };
-    //         points[drawCount+1] = { center.x + x, center.y + y };
-    //         points[drawCount+2] = { center.x - x, center.y - y };
-    //         points[drawCount+3] = { center.x - x, center.y + y };
-    //         points[drawCount+4] = { center.x + x, center.y - y };
-    //         points[drawCount+5] = { center.x + x, center.y + y };
-    //         points[drawCount+6] = { center.x - x, center.y - y };
-    //         points[drawCount+7] = { center.x - x, center.y + y };
-    //
-    //         drawCount += 8;
-    //
-    //         if (error <= 0)
-    //         {
-    //             y++;
-    //             error += ty;
-    //             ty += 2;
-    //         }
-    //
-    //         if (error > 0)
-    //         {
-    //             x--;
-    //             tx += 2;
-    //             error += tx - diameter;
-    //         }
-    //     }
-    //
-    //     SDL_RenderPoints(renderer, points, drawCount);
-    // }
 } // namespace scp

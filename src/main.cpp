@@ -4,12 +4,6 @@
 #include "Utils/Utils.hpp"
 #include "config.hpp"
 #include "Color/Color.hpp"
-#include <SDL3/SDL_error.h>
-#include <SDL3/SDL_init.h>
-#include <SDL3/SDL_rect.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_stdinc.h>
-#include <SDL3/SDL_video.h>
 
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>

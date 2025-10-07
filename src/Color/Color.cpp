@@ -1,8 +1,6 @@
 #include "Color.hpp"
 #include "Utils/Utils.hpp"
 
-#include <SDL3/SDL_init.h>
-
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>

@@ -9,7 +9,6 @@
 #include <iterator>
 #include <filesystem>
 #include <locale>
-#include <string>
 
 namespace scp
 {
