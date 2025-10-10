@@ -29,7 +29,7 @@ if (NOT TARGET SDL3::SDL3 OR SCP_BUILD_DEPENDENCIES)
     FetchContent_Declare(
         SDL3
         GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-        GIT_TAG        release-3.2.22
+        GIT_TAG        release-3.2.24
         GIT_SHALLOW    ON
         GIT_PROGRESS   ON
     )
