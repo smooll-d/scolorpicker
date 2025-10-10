@@ -47,12 +47,10 @@ Here's a list of features both completed and planned marked by versions which th
     * Polish
 * constrict color preview to screen bounds (v2.4.0)
 * rounded color preview borders (v2.4.0)
+* saving to clipboard manually instead of using external programs (v2.5.0)
 
 > [!NOTE]
 > Man pages are also localized.
-
-### Planned
-* saving to clipboard manually instead of using external programs
 
 ## Installation
 scolorpicker has a couple installation methods with more (like a flatpak package) planned.
@@ -90,7 +88,7 @@ If you cannot use any of the above options for installation, you can always buil
 When cloning the repo, be sure to clone a specific tag and not the master branch. This will ensure that your build is stable.
 
 ```bash
-git clone --depth=1 --branch=v2.4.0 https://github.com/smooll-d/scolorpicker.git
+git clone --depth=1 --branch=v2.5.0 https://github.com/smooll-d/scolorpicker.git
 ```
 
 ##### Legacy Version
