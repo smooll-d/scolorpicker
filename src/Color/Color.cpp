@@ -1,6 +1,11 @@
 #include "Color.hpp"
 #include "Utils/Utils.hpp"
 
+#include <SDL3/SDL_clipboard.h>
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_video.h>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -119,72 +124,14 @@ namespace scp
             return color + '\n';
         else if (appState->cli.GetInfo().output == "clipboard")
         {
-            int fd[2];
-
-            if (pipe(fd) == -1)
+            bool inClipboard = SDL_SetClipboardText(color.c_str());
+            if (!inClipboard)
             {
-                perror("pipe");
+                std::string notInClipboardError = Utils::Localize("Color/not_in_clipboard");
+
+                SDL_Log("%s", Utils::ReplacePlaceholder(notInClipboardError, SDL_GetError()).c_str());
 
                 SDL_Quit();
-            }
-
-            pid_t childPID = fork();
-
-            int status = 0;
-
-            if (childPID == -1)
-            {
-                perror("fork");
-
-                SDL_Quit();
-            }
-            else if (childPID == 0)
-            {
-                if (dup2(fd[0], STDIN_FILENO) == -1)
-                {
-                    perror("dup2");
-
-                    SDL_Quit();
-                }
-
-                close(fd[0]);
-                close(fd[1]);
-
-                const char *argv[3] {};
-
-                if (Utils::CheckSession() == 0)
-                {
-                    argv[0] = "xsel";
-                    argv[1] = "-b";
-                    argv[2] = nullptr;
-                }
-                else if (Utils::CheckSession() == 1)
-                {
-                    argv[0] = "wl-copy";
-                    argv[1] = nullptr;
-                }
-
-                execvp(argv[0], const_cast<char *const *>(argv));
-            }
-            else
-            {
-                close(fd[0]);
-
-                if (write(fd[1], color.c_str(), color.length()) == -1)
-                {
-                    perror("write");
-
-                    SDL_Quit();
-                }
-
-                close(fd[1]);
-
-                if (waitpid(childPID, &status, WNOHANG) == -1)
-                {
-                    perror("waitpid");
-
-                    SDL_Quit();
-                }
             }
         }
 
