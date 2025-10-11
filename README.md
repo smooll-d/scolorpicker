@@ -8,7 +8,6 @@ scolorpicker (`smooll's Color Picker`) is a color picker application available o
 ## Table of Contents
 * [Features](#features)
     * [Completed](#completed)
-    * [Planned](#planned)
 * [Installation](#installation)
     * [Dependencies](#dependencies)
         * [X11](#x11)
