@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(scolorpicker
-    VERSION 2.5.0
+    VERSION 2.5.1
     DESCRIPTION "smooll's Color Picker"
     LANGUAGES CXX C
 )
@@ -40,11 +40,12 @@ configure_file("${CMAKE_SOURCE_DIR}/cmake/config.hpp.in" "${CMAKE_SOURCE_DIR}/sr
 file(GLOB_RECURSE cli_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/CLI/*.cpp")
 file(GLOB_RECURSE utils_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utils/*.cpp")
 file(GLOB_RECURSE color_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Color/*.cpp")
+file(GLOB_RECURSE ui_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/UI/*.cpp")
 file(GLOB_RECURSE stb_image_src CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/stb_image/*.c")
 
 set(exe_src "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
-list(APPEND exe_src ${cli_src} ${utils_src} ${color_src} ${screenshot_src} ${stb_image_src})
+list(APPEND exe_src ${cli_src} ${utils_src} ${color_src} ${screenshot_src} ${ui_src} ${stb_image_src})
 
 add_executable(${CMAKE_PROJECT_NAME} ${exe_src})
 

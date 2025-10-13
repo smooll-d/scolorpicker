@@ -46,7 +46,6 @@ Here's a list of features both completed and planned marked by versions which th
     * Polish
 * constrict color preview to screen bounds (v2.4.0)
 * rounded color preview borders (v2.4.0)
-* saving to clipboard manually instead of using external programs (v2.5.0)
 
 > [!NOTE]
 > Man pages are also localized.
@@ -60,10 +59,12 @@ scolorpicker has a couple installation methods with more (like a flatpak package
 #### X11
 * Xlib or xcb (for screenshots)
 * xcb-image (only if using xcb)
+* xsel (for copying to clipboard)
 
 #### Wayland
 * sdbus-c++ (for screenshots) (*)
 * [desktop portal](https://wiki.archlinux.org/title/XDG_Desktop_Portal) which supplies [Screenshot](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Screenshot.html) + its dependencies (e.g. `xdg-desktop-portal-wlr` + grim)
+* wl-clipboard (for copying to clipboard)
 
 (*) - if installing through the AUR or building manually, these are optional as in, they can be downloaded and built automatically without having to install said dependencies system-wide.
 
@@ -87,7 +88,7 @@ If you cannot use any of the above options for installation, you can always buil
 When cloning the repo, be sure to clone a specific tag and not the master branch. This will ensure that your build is stable.
 
 ```bash
-git clone --depth=1 --branch=v2.5.0 https://github.com/smooll-d/scolorpicker.git
+git clone --depth=1 --branch=v2.5.1 https://github.com/smooll-d/scolorpicker.git
 ```
 
 ##### Legacy Version
