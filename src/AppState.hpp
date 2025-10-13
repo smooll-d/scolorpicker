@@ -2,6 +2,7 @@
 #define SCP_APPSTATE
 
 #include "CLI/CLI.hpp"
+#include "UI/UI.hpp"
 #include "Utils/Utils.hpp"
 #include "config.hpp"
 
@@ -16,15 +17,29 @@ struct ColorView
     float height;
     float radius;
 
-    void Draw(SDL_Renderer *renderer)
+    ColorView(float x, float y, float width, float height, float radius, scp::UI ui)
+     : x{x},
+       y{y},
+       width{width},
+       height{height},
+       radius{radius},
+       _Ui{ui}
+    {}
+
+    void Draw()
     {
-        scp::Utils::DrawFilledRoundedRectangle(renderer, { x, y }, { width, height }, radius);
+        _Ui.RoundedRectangle({ x, y }, { width, height }, radius, true);
     }
+
+    private:
+        scp::UI _Ui;
 };
 
 struct AppState
 {
     scp::CLI cli;
+
+    scp::UI ui;
 
     SDL_Window *window;
 

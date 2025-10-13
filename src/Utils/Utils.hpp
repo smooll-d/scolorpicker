@@ -14,11 +14,6 @@ namespace scp
         std::string TRed(std::string_view str, std::string_view ground = "background");
 
         void TestSDL(SDL_Renderer *renderer);
-        void DrawFilledCircle(SDL_Renderer *renderer, std::pair<float, float> center, float radius);
-        void DrawFilledRoundedRectangle(SDL_Renderer *renderer,
-                                        std::pair<float, float> position,
-                                        std::pair<float, float> size,
-                                        float radius);
 
         unsigned int CountTrailingZeroes(int number);
 

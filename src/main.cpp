@@ -13,6 +13,8 @@
 #include <iostream>
 #include <unistd.h>
 
+// TODO: separate localization stuff into its own place
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     AppState *appState = static_cast<AppState*>(SDL_calloc(1, sizeof(AppState)));
@@ -68,17 +70,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_APP_FAILURE;
     }
 
+    new (&appState->ui) scp::UI{appState->renderer};
+
     appState->screenshot = screenshooter->CreateTexture(appState->renderer);
 
     appState->borderThickness = 3.0f;
 
-    appState->colorView.radius = 15.0f;
-    appState->colorView.width = 100.0f;
-    appState->colorView.height = 100.0f;
-
-    appState->colorViewBorder.radius = appState->colorView.radius + appState->borderThickness;
-    appState->colorViewBorder.width = appState->colorView.width + 2.0f * appState->borderThickness;
-    appState->colorViewBorder.height = appState->colorView.height + 2.0f * appState->borderThickness;
+    new (&appState->colorView) ColorView{0.0f, 0.0f, 100.0f, 100.0f, 15.0f, appState->ui};
+    new (&appState->colorViewBorder) ColorView{0.0f, 0.0f,
+                                               appState->colorView.width + 2.0f * appState->borderThickness,
+                                               appState->colorView.height + 2.0f * appState->borderThickness,
+                                               appState->colorView.radius + appState->borderThickness, appState->ui};
 
     return SDL_APP_CONTINUE;
 }
@@ -163,12 +165,12 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         appState->colorViewBorder.y -= appState->colorViewBorder.height + appState->borderThickness + 10.0f;
     }
 
-    appState->colorViewBorder.Draw(appState->renderer);
+    appState->colorViewBorder.Draw();
 
     SDL_SetRenderDrawColor(appState->renderer,
                            color.r, color.g, color.b, color.a);
 
-    appState->colorView.Draw(appState->renderer);
+    appState->colorView.Draw();
 
     SDL_RenderPresent(appState->renderer);
 
@@ -188,6 +190,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
         SDL_DestroyCursor(appState->cursor);
 
         appState->cli.~CLI();
+        appState->ui.~UI();
 
         SDL_free(appState);
     }
