@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(scolorpicker
-    VERSION 2.5.1
+    VERSION 2.5.2
     DESCRIPTION "smooll's Color Picker"
     LANGUAGES CXX C
 )
